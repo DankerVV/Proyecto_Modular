@@ -42,7 +42,7 @@ class _MainScreenState extends State<MainScreen> {
         elevation: 0,
         items: [
           BottomNavigationBarItem(
-            icon: const Icon(Icons.house),
+            icon: const Icon(Icons.house, size: 50,),
             activeIcon: const Icon(Icons.house),
             label: 'Inicio',
             backgroundColor: colors.primary,
