@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proyecto_modular/config/theme/app_theme.dart';
 import 'package:proyecto_modular/presentation/screens/main_screen.dart';
 
 void main() {
@@ -14,9 +15,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Modular',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-      ),
+      theme: AppTheme(selectedColor: 0).theme(),
       home: const MainScreen(),
     );
   }
