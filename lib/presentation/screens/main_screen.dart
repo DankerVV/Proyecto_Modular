@@ -42,34 +42,35 @@ class _MainScreenState extends State<MainScreen> {
         elevation: 0,
         items: [
           BottomNavigationBarItem(
-            icon: const Icon(Icons.house, size: 50,),
-            activeIcon: const Icon(Icons.house),
-            label: 'Inicio',
+            icon: const Icon(Icons.house, size: 30,),
+            activeIcon: const Icon(Icons.house, size: 40,),
+            label: 'Inicio', 
             backgroundColor: colors.primary,
             ),
 
           BottomNavigationBarItem(
-            icon: const Icon(Icons.person),
-            activeIcon: const Icon(Icons.person),
+            icon: const Icon(Icons.person, size: 30,),
+            activeIcon: const Icon(Icons.person, size: 40,),
             label: 'Perfil',
             backgroundColor: colors.primary,
             ),
 
           BottomNavigationBarItem(
-            icon: const Icon(Icons.train),
-            activeIcon: const Icon(Icons.train),
+            icon: const Icon(Icons.train, size: 30,),
+            activeIcon: const Icon(Icons.train, size: 40,),
             label: 'Rutas',
             backgroundColor: colors.primary,
             ),
 
           BottomNavigationBarItem(
-            icon: const Icon(Icons.settings),
-            activeIcon: const Icon(Icons.settings),
+            icon: const Icon(Icons.settings, size: 30,),
+            activeIcon: const Icon(Icons.settings, size: 40,),
             label: 'Configuración',
             backgroundColor: colors.primary,
             ),
             
         ],
+        selectedFontSize: 18,
         ),
     );
   }

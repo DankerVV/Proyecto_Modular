@@ -63,7 +63,8 @@ Widget addButton(){
       child: const Row(
         children: [
           SizedBox(width: 15),
-          Text('Agregar Tarjeta   ', textAlign: TextAlign.left, style: TextStyle(fontSize: 22),),
+          Text('Agregar Tarjeta', textAlign: TextAlign.left, style: TextStyle(fontSize: 22),),
+          SizedBox(width: 130,),
           Icon(Icons.add, size: 30,)
         ],
       ),
@@ -83,7 +84,8 @@ Widget physicalCard(){
       child: const Row(
         children: [
           SizedBox(width: 15),
-          Text('Recargar Tarjeta Física   ', textAlign: TextAlign.left, style: TextStyle(fontSize: 22),),
+          Text('Recargar Tarjeta Física', textAlign: TextAlign.left, style: TextStyle(fontSize: 22),),
+          SizedBox(width: 50,),
           Icon(Icons.credit_card, size: 30,)
         ],
       ),
