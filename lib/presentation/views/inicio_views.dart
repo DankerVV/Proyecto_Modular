@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:proyecto_modular/presentation/views/inicio_views/card_pay.dart';
+import 'package:proyecto_modular/presentation/views/inicio_views/popup_menu.dart';
 import 'package:proyecto_modular/presentation/views/inicio_views/reload_physical_card_view.dart';
 
 class InicioView extends StatelessWidget {
@@ -43,12 +44,8 @@ Widget basicButton (BuildContext context){
           const Text('Básico', textAlign: TextAlign.left, style: TextStyle(fontSize: 22),),
           const SizedBox(width: 30),
           const Expanded(child: Text(r'$9.50 mxn', textAlign: TextAlign.left, style: TextStyle(fontSize: 15, fontStyle: FontStyle.italic),)),
-          IconButton(
-            icon: const Icon(Icons.more_vert, size: 30,),
-            onPressed: () {
-              //TO DO: Al presionar se abre el menu de opciones, hacerlo en otro archivo
-            },
-         ),
+          buildPopupMenuButton(context),
+
         ],
       ),
     )
