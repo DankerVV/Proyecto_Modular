@@ -1,17 +1,18 @@
 import 'package:flutter/material.dart';
 
-class ReloadPhysicalCard extends StatelessWidget {
-  const ReloadPhysicalCard({super.key});
+class CardPay extends StatelessWidget {
+  const CardPay({super.key});
 
   @override
   Widget build(BuildContext context) {
+    //NOTA: INTENTAR USAR ESTE MISMO ARCHIVO PARA PAGAR CON CUALQUIER TARJETA, RECIBIENDO ALGÚN PARÁMETRO O ALGO
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Recargar una tarjeta Física"),
+        title: const Text("Pago"),
       ),
       body: const Center(
         child: Text(
-          'Mantén tu tarjeta MiPasaje cerca del celular',
+          'Acerca tu celular a la terminal de pago',
           style: TextStyle(fontSize: 20),
           textAlign: TextAlign.center,
         ),
@@ -19,5 +20,3 @@ class ReloadPhysicalCard extends StatelessWidget {
     );
   }
 }
-
-void nfcReader(BuildContext context){}

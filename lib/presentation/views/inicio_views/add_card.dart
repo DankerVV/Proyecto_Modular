@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-class ReloadPhysicalCard extends StatelessWidget {
-  const ReloadPhysicalCard({super.key});
+class AddCard extends StatelessWidget {
+  const AddCard({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Recargar una tarjeta Física"),
+        title: const Text("Agregar una Tarjeta Nueva"),
       ),
       body: const Center(
         child: Text(
-          'Mantén tu tarjeta MiPasaje cerca del celular',
+          'aaa',
           style: TextStyle(fontSize: 20),
           textAlign: TextAlign.center,
         ),
@@ -19,5 +19,3 @@ class ReloadPhysicalCard extends StatelessWidget {
     );
   }
 }
-
-void nfcReader(BuildContext context){}
