@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:proyecto_modular/presentation/views/perfil_views/profile_settings.dart';
+import 'package:proyecto_modular/presentation/views/perfil_views/view_card.dart';
 
 class PerfilView extends StatelessWidget {
   const PerfilView({super.key});
@@ -12,16 +14,18 @@ class PerfilView extends StatelessWidget {
         children: [
         Center(
           child: ProfileCard(
-            imagePath: 'assets/user.jpg', // Asegúrate de tener esta imagen en tu carpeta assets
-            name: 'Usuario genérico',
+            //Datos de prueba
+            imagePath: 'assets/profile_test.jpg', // Asegúrate de tener esta imagen en tu carpeta assets
+            //ImagePath todavía no es funcional
+            name: 'Orlando Loredo',
             description: 'Estudiante',
           ),
         ),
         const SizedBox(height: 40,),
-        Cardinfo(),
+        Cardinfo(context),
 
         const SizedBox(height: 40,),
-        Settingsbutton(),
+        Settingsbutton(context),
 
         const SizedBox(height: 40,),
         Logoutbutton(),
@@ -32,7 +36,7 @@ class PerfilView extends StatelessWidget {
 }
 
 class ProfileCard extends StatelessWidget {
-  final String imagePath;
+  final String imagePath;  
   final String name;
   final String description;
 
@@ -83,11 +87,13 @@ class ProfileCard extends StatelessWidget {
 }
 
 
-Widget Cardinfo(){
+Widget Cardinfo(BuildContext context){
   return(
     ElevatedButton(
        onPressed: (){
-        //TO DO: Al presionar se abre un menú para registrar un nuevo pasaje, hacerlo en otro archivo
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const Cardview()),
+        );
       },
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
@@ -104,11 +110,13 @@ Widget Cardinfo(){
   );
 }
 
-Widget Settingsbutton(){
+Widget Settingsbutton(BuildContext context){
   return(
     ElevatedButton(
-       onPressed: (){
-        //TO DO: Al presionar se abre un menú para registrar un nuevo pasaje, hacerlo en otro archivo
+      onPressed: (){
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const ProfileSettings()),
+        );
       },
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
@@ -131,6 +139,7 @@ Widget Logoutbutton(){
     ElevatedButton(
        onPressed: (){
         //TO DO: Al presionar se abre un menú para registrar un nuevo pasaje, hacerlo en otro archivo
+        //Esta opcion no esta disponible hasta que se cree un log in
       },
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
