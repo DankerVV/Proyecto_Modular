@@ -15,8 +15,8 @@ class PerfilView extends StatelessWidget {
         Center(
           child: ProfileCard(
             //Datos de prueba
-            imagePath: 'assets/profile_test.jpg', // Asegúrate de tener esta imagen en tu carpeta assets
-            //ImagePath todavía no es funcional
+            imagePath: 'profile_test.jpg', // Asegúrate de tener esta imagen en tu carpeta assets
+            //ImagePath ya es funcional pero solamente en testeo sin BD
             name: 'Orlando Loredo',
             description: 'Estudiante',
           ),
@@ -28,7 +28,8 @@ class PerfilView extends StatelessWidget {
         Settingsbutton(context),
 
         const SizedBox(height: 40,),
-        Logoutbutton(),
+        Logoutbutton(context),
+
         ],
       ),
     );
@@ -134,12 +135,14 @@ Widget Settingsbutton(BuildContext context){
 }
 
  
-Widget Logoutbutton(){
+Widget Logoutbutton(BuildContext context){
   return(
     ElevatedButton(
        onPressed: (){
         //TO DO: Al presionar se abre un menú para registrar un nuevo pasaje, hacerlo en otro archivo
-        //Esta opcion no esta disponible hasta que se cree un log in
+        //Esta opcion no funcionará correctamente hasta que se cree un log in
+        // Mostrar AlertDialog
+        _showAlertDialog(context);
       },
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
@@ -153,5 +156,31 @@ Widget Logoutbutton(){
         ],
       ),
     )
+  );
+}
+
+void _showAlertDialog(BuildContext context) {
+  showDialog(
+    context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Cerrar sesión'),
+          content: Text('Estás saliendo de la cuenta.'),
+          actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Cierra el diálogo
+                },
+                child: Text('Cancelar'),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Salir de la cuenta 
+                },
+                child: Text('Aceptar'),
+              ),
+          ],
+        );
+      },
   );
 }
