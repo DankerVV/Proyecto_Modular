@@ -4,6 +4,8 @@
 <dict>
 	<key>NSNFCUsageDescription</key>
 	<string>Esta app necesita acceso NFC para manipular tarjetas fisicas e interactuar con detectores.</string>
+	<key>NFCReaderUsageDescription</key>
+	<string>Esta app necesita acceso NFC para manipular tarjetas fisicas e interactuar con detectores.</string>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
