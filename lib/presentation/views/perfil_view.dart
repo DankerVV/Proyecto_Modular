@@ -4,8 +4,7 @@ import 'package:proyecto_modular/presentation/views/perfil_views/view_card.dart'
 
 class PerfilView extends StatelessWidget {
   const PerfilView({super.key});
-
-
+  
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -139,9 +138,8 @@ Widget Logoutbutton(BuildContext context){
   return(
     ElevatedButton(
        onPressed: (){
-        //TO DO: Al presionar se abre un menú para registrar un nuevo pasaje, hacerlo en otro archivo
         //Esta opcion no funcionará correctamente hasta que se cree un log in
-        // Mostrar AlertDialog
+        // Muestra el aviso de salir de la cuenta 
         _showAlertDialog(context);
       },
       style: ElevatedButton.styleFrom(
