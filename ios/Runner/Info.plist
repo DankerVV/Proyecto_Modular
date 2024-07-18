@@ -6,6 +6,10 @@
 	<string>Esta app necesita acceso NFC para manipular tarjetas fisicas e interactuar con detectores.</string>
 	<key>NFCReaderUsageDescription</key>
 	<string>Esta app necesita acceso NFC para manipular tarjetas fisicas e interactuar con detectores.</string>
+	<key>com.apple.developer.nfc.readersession.formats</key>
+	<array>
+		<string>NDEF</string>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>

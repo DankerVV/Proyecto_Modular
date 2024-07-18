@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:nfc_manager/nfc_manager.dart';
+import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';
+//import 'package:nfc_manager/nfc_manager.dart';
+
 
 class ReloadPhysicalCard extends StatefulWidget {
   const ReloadPhysicalCard({super.key});
@@ -35,43 +37,19 @@ class _ReloadPhysicalCardState extends State<ReloadPhysicalCard> {
 
   void startNFCReading() async {
     try {
-      bool isAvailable = await NfcManager.instance.isAvailable();
-      debugPrint('NFC availability checked: $isAvailable');
-      // Comprobar si NFC está disponible en el dispositivo
-      if (isAvailable) {
-        setState(() {
-          _nfcMessage = 'Esperando una tarjeta NFC...';
-        });
-        // Iniciar la sesión NFC y escuchar por etiquetas NFC descubiertas
-        NfcManager.instance.startSession(
-          onDiscovered: (NfcTag tag) async {
-            // Procesar la etiqueta NFC
-            debugPrint('NFC Tag Detected: ${tag.data}');
-            setState(() {
-              _nfcMessage = 'Etiqueta NFC detectada: ${tag.data}';
-            });
-            // Detener la sesión NFC después de la detección
-            await NfcManager.instance.stopSession();
-          },
-          onError: (error) async {
-            debugPrint('NFC Session Error: $error');
-            setState(() {
-              _nfcMessage = 'Error en la sesión NFC: $error';
-            });
-            await NfcManager.instance.stopSession(errorMessage: error.toString());
-          },
-        );
-      } else {
-        setState(() {
-          _nfcMessage = 'NFC no está disponible en este dispositivo.';
-        });
-        debugPrint('NFC not available.');
-      }
+      // Inicia la sesión NFC
+      NFCTag tag = await FlutterNfcKit.poll();
+      // Procesa la etiqueta NFC
+      setState(() {
+        _nfcMessage = 'Tarjeta NFC detectada: ${tag.type}';
+      });
     } catch (e) {
       setState(() {
-        _nfcMessage = 'Error leyendo NFC: $e';
+        _nfcMessage = 'Error al leer NFC: $e';
       });
-      debugPrint('Error reading NFC: $e');
+    } finally {
+      // Detén la sesión NFC después de la lectura
+      await FlutterNfcKit.finish();
     }
   }
 }
