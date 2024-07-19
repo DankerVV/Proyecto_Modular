@@ -1,6 +1,7 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
+import 'package:proyecto_modular/main.dart';
+import 'package:proyecto_modular/presentation/views/inicio_views/new_card.dart';
 
 class AddCard extends StatelessWidget {
   const AddCard({super.key});
@@ -19,7 +20,9 @@ class AddCard extends StatelessWidget {
             onTap: () async {
               bool isPasswordCorrect = await verifyPassword(context);
               if (isPasswordCorrect) {
-                // Vista: crear una nueva tarjeta
+                navigatorKey.currentState?.push(
+                  MaterialPageRoute(builder: (context) => const NewCard(cardType: 'verde')),
+                );
               }
             },
           ),
@@ -28,7 +31,9 @@ class AddCard extends StatelessWidget {
             onTap: () async {
               bool isPasswordCorrect = await verifyPassword(context);
               if (isPasswordCorrect) {
-                // Vista: crear una nueva tarjeta
+                navigatorKey.currentState?.push(
+                  MaterialPageRoute(builder: (context) => const NewCard(cardType: 'amarillo')),
+                );
               }
             },
           ),
@@ -37,7 +42,9 @@ class AddCard extends StatelessWidget {
             onTap: () async {
               bool isPasswordCorrect = await verifyPassword(context);
               if (isPasswordCorrect) {
-                // Vista: crear una nueva tarjeta
+                navigatorKey.currentState?.push(
+                  MaterialPageRoute(builder: (context) => const NewCard(cardType: 'supervisor')),
+                );
               }
             },
           ),
@@ -61,7 +68,7 @@ Future<bool> verifyPassword(BuildContext context) {
         content: SingleChildScrollView(
           child: ListBody(
             children: <Widget>[
-              const Text('Este es un trámite gubernamental, sólo personal autorizado puede continuar.'),
+              const Text('Este es un trámite gubernamental, sólo personal autorizado puede continuar.\nPara más información, visita https://programamipasaje.jalisco.gob.mx/'),
               const SizedBox(height: 15,),
               TextField(
                 controller: passwordController,

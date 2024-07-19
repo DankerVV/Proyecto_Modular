@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-//import 'package:nfc_manager/nfc_manager.dart';
 import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';
 
 class CardPay extends StatefulWidget {
