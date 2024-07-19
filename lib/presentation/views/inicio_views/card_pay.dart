@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:nfc_manager/nfc_manager.dart';
+//import 'package:nfc_manager/nfc_manager.dart';
+import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';
 
 class CardPay extends StatefulWidget {
   const CardPay({super.key});
@@ -9,10 +10,11 @@ class CardPay extends StatefulWidget {
 }
 
 class _CardPayState extends State<CardPay> {
+  final String ejemplo = 'hola';
   @override
   void initState() {
     super.initState();
-    startNFCReading();
+    startNFCFinder(ejemplo);
   }
 
   @override
@@ -33,25 +35,18 @@ class _CardPayState extends State<CardPay> {
   }
 }
 
-void startNFCReading() async {
-  try {
-    bool isAvailable = await NfcManager.instance.isAvailable();
-    //We first check if NFC is available on the device.
-    if (isAvailable) {
-    //If NFC is available, start an NFC session and listen for NFC tags to be discovered.
-    NfcManager.instance.startSession(
-      onDiscovered: (NfcTag tag) async {
-        // Process NFC tag, When an NFC tag is discovered, print its data to the console.
-        debugPrint('NFC Tag Detected: ${tag.data}');
-        print('NFC Tag Detected: ${tag.data}');
-      },
-    );
-    } else {
-      debugPrint('NFC not available.');
-      print('NFC not available.');
-    }
-  } catch (e) {
-    debugPrint('Error reading NFC: $e');
-    print('Error reading NFC: $e');
+void startNFCFinder(String cardType) async {
+  //TODO: se recibe un string con el tipo de dato
+  if (cardType == 'basico'){
+    //TODO: pagar 9.50
+  }
+  else if(cardType == 'estudiante'){
+    //TODO: restar -1 pasaje
+  }
+  else if(cardType == 'amarillo'){
+    //TODO: pagar 4.75
+  }
+  else if(cardType == 'supervisor'){
+    //TODO: pagar nada, solo desbloquear
   }
 }

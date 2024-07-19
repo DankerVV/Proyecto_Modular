@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:proyecto_modular/presentation/views/inicio_views/add_card.dart';
 import 'package:proyecto_modular/presentation/views/inicio_views/card_pay.dart';
 import 'package:proyecto_modular/presentation/views/inicio_views/popup_menu.dart';
 import 'package:proyecto_modular/presentation/views/inicio_views/reload_physical_card_view.dart';
@@ -16,7 +17,7 @@ class InicioView extends StatelessWidget {
           basicButton(context),
           const SizedBox(height: 25,),
           const Spacer(),
-          addButton(),
+          addButton(context),
           const SizedBox(height: 25,),
           physicalCard(context),
           const SizedBox(height: 50,),
@@ -52,11 +53,13 @@ Widget basicButton (BuildContext context){
   );
 }
 
-Widget addButton(){
+Widget addButton(BuildContext context){
   return(
     ElevatedButton(
        onPressed: (){
-        //TO DO: Al presionar se abre un menú para registrar un nuevo pasaje, hacerlo en otro archivo
+         Navigator.of(context).push(
+          MaterialPageRoute(builder: (context) => const AddCard()),
+        );
       },
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
@@ -77,7 +80,6 @@ Widget physicalCard(BuildContext context){
   return(
     ElevatedButton(
        onPressed: (){
-        //TO DO: Al presionar se activa el NFC para encontrar y modificar una tarjeta física, hacerlo en otro archivo
         Navigator.of(context).push(
           MaterialPageRoute(builder: (context) => const ReloadPhysicalCard()),
         );

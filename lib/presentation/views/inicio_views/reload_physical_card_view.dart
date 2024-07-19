@@ -16,6 +16,7 @@ class _ReloadPhysicalCardState extends State<ReloadPhysicalCard> {
   @override
   void initState() {
     super.initState();
+    
     startNFCReading();
   }
 
@@ -49,7 +50,7 @@ class _ReloadPhysicalCardState extends State<ReloadPhysicalCard> {
       });
     } finally {
       // Detén la sesión NFC después de la lectura
-      await FlutterNfcKit.finish();
+      //await FlutterNfcKit.finish();
     }
   }
 }
