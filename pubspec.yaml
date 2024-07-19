@@ -40,6 +40,7 @@ dependencies:
   cupertino_icons: ^1.0.6
   nfc_manager: ^3.5.0
   flutter_nfc_kit: ^3.5.2
+  pay: ^2.0.0
 
 dev_dependencies:
   flutter_test:

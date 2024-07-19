@@ -9,7 +9,7 @@ class AddCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("Selecciona una opción \n BORRAR -> contraseña: 1234"),
+        title: const Text("Selecciona una opción \ncontraseña: 1234"),
       ),
       body: ListView(
         children: <Widget>[

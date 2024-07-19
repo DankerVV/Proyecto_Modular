@@ -3,23 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';
 
 class CardPay extends StatefulWidget {
-  const CardPay({super.key});
+  final String cardType;
+  const CardPay({super.key, required this.cardType});//recibir un String en la variable cardType
 
   @override
   State<CardPay> createState() => _CardPayState();
 }
 
 class _CardPayState extends State<CardPay> {
-  final String ejemplo = 'hola';
   @override
   void initState() {
     super.initState();
-    startNFCFinder(ejemplo);
+    startNFCFinder(widget.cardType);
   }
 
   @override
   Widget build(BuildContext context) {
-    //NOTA: INTENTAR USAR ESTE MISMO ARCHIVO PARA PAGAR CON CUALQUIER TARJETA, RECIBIENDO ALGÚN PARÁMETRO O ALGO
+    //NOTA: USAR ESTE MISMO ARCHIVO PARA PAGAR CON CUALQUIER TARJETA, RECIBIENDO ALGÚN PARÁMETRO O ALGO
     return Scaffold(
       appBar: AppBar(
         title: const Text("Pago"),
@@ -36,11 +36,11 @@ class _CardPayState extends State<CardPay> {
 }
 
 void startNFCFinder(String cardType) async {
-  //TODO: se recibe un string con el tipo de dato
+  //TODO: buscar una terminal NFC, y proseguir unicamente cuando se encuentre.
   if (cardType == 'basico'){
     //TODO: pagar 9.50
   }
-  else if(cardType == 'estudiante'){
+  else if(cardType == 'verde'){
     //TODO: restar -1 pasaje
   }
   else if(cardType == 'amarillo'){

@@ -32,7 +32,7 @@ Widget basicButton (BuildContext context){
     ElevatedButton(
       onPressed: (){
         Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const CardPay()),
+          MaterialPageRoute(builder: (context) => const CardPay(cardType: 'basico')),
         );
       },
       style: ElevatedButton.styleFrom(
