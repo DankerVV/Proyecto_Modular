@@ -4,6 +4,8 @@ import 'package:proyecto_modular/config/theme/theme_provider.dart';
 import 'package:proyecto_modular/presentation/screens/main_screen.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() {
   runApp(
     const ProviderScope(child: MyApp(),)
@@ -19,6 +21,7 @@ class MyApp extends HookConsumerWidget {
     final appThemeState = ref.watch(appThemeStateNotifier);
     return MaterialApp(
       title: 'Flutter Modular',
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       //theme: AppTheme(selectedColor: 0).theme(), 
       theme: AppTheme.lightTheme,
