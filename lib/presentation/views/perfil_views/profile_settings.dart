@@ -120,20 +120,20 @@ void _showAlertDialog(BuildContext context) {
     context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Elimar cuenta'),
-          content: Text('Una vez borrada la cuenta esta no se podra recuperar. ¿Estás seguro de ello?'),
+          title: const Text('Elimar cuenta'),
+          content: const Text('Una vez borrada la cuenta esta no se podra recuperar. ¿Estás seguro de ello?'),
           actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop(); // Cierra el diálogo
                 },
-                child: Text('Cancelar'),
+                child: const Text('Cancelar'),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop(); // Salir de la cuenta 
                 },
-                child: Text('Aceptar'),
+                child: const Text('Aceptar'),
               ),
           ],
         );

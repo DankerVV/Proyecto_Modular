@@ -11,7 +11,7 @@ class PerfilView extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-        Center(
+        const Center(
           child: ProfileCard(
             //Datos de prueba
             imagePath: 'profile_test.jpg', // Asegúrate de tener esta imagen en tu carpeta assets
@@ -40,7 +40,7 @@ class ProfileCard extends StatelessWidget {
   final String name;
   final String description;
 
-  ProfileCard({
+  const ProfileCard({super.key, 
     required this.imagePath,
     required this.name,
     required this.description,
@@ -62,18 +62,18 @@ class ProfileCard extends StatelessWidget {
               radius:60,
               backgroundImage: AssetImage(imagePath),
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 10),
             Text(
               name,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
             Text(
               description,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 16,
                 color: Colors.grey,
               ),
@@ -162,20 +162,20 @@ void _showAlertDialog(BuildContext context) {
     context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Cerrar sesión'),
-          content: Text('Estás saliendo de la cuenta.'),
+          title: const Text('Cerrar sesión'),
+          content: const Text('Estás saliendo de la cuenta.'),
           actions: [
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop(); // Cierra el diálogo
                 },
-                child: Text('Cancelar'),
+                child: const Text('Cancelar'),
               ),
               TextButton(
                 onPressed: () {
                   Navigator.of(context).pop(); // Salir de la cuenta 
                 },
-                child: Text('Aceptar'),
+                child: const Text('Aceptar'),
               ),
           ],
         );
