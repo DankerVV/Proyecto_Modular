@@ -12,7 +12,7 @@ class _CardPayState extends State<CardPay> {
   @override
   void initState() {
     super.initState();
-    startNFCFinder(widget.cardType);
+    startNFCFinder(widget.cardType, context);
   }
 
   @override
@@ -33,18 +33,22 @@ class _CardPayState extends State<CardPay> {
   }
 }
 
-void startNFCFinder(String cardType) async {
+void startNFCFinder(String cardType, BuildContext context) async {
   //TODO: buscar una terminal NFC, y proseguir unicamente cuando se encuentre.
   if (cardType == 'basico'){
-    //TODO: pagar 9.50
+    processPayment(9.50);
   }
   else if(cardType == 'verde'){
-    //TODO: restar -1 pasaje
+    pasajePayment();//siempre es un solo pago
   }
   else if(cardType == 'amarillo'){
-    //TODO: pagar 4.75
+    processPayment(4.75);
   }
   else if(cardType == 'supervisor'){
     //TODO: pagar nada, solo desbloquear
   }
 }
+
+void processPayment (double precio){}
+
+void pasajePayment(){}
