@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "851985988122",
+    "project_id": "proyecto-modular-7e78c",
+    "storage_bucket": "proyecto-modular-7e78c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:851985988122:android:0f805eb1636f505e552fa3",
+        "android_client_info": {
+          "package_name": "com.example.proyecto_modular"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCz2NZyeiu7G-RFDPlgv_dZO0oaew0v4Cc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
