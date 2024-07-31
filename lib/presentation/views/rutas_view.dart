@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:proyecto_modular/presentation/views/rutas_views/estaciones_markers.dart';
+import 'package:proyecto_modular/presentation/views/rutas_views/estaciones_polylines.dart';
 
 class RutasView extends StatefulWidget {
   const RutasView({super.key});
@@ -17,7 +18,6 @@ class _RutasViewState extends State<RutasView> {
     super.initState();
   }
 
-
   @override
   Widget build(BuildContext context)=> Scaffold(
     body: GoogleMap(
@@ -25,11 +25,20 @@ class _RutasViewState extends State<RutasView> {
         target: initialPosition,
         zoom: 12
       ),
-      markers:{
-        ...estacionesLinea1,
-        ...estacionesLinea2,
-        ...estacionesLinea3,
-      }
+      // markers:{
+      //   ...estacionesLinea1,
+      //   ...estacionesLinea2,
+      //   ...estacionesLinea3,
+      //   ...estacionesMacrocalzada,
+      //   ...estacionesMacroperiferico
+      // },
+      polylines: {
+        ...lineasLinea1,
+        ...lineasLinea2,
+        ...lineasLinea3,
+        ...lineasMacrocalzada,
+        ...lineasMacroperiferico
+        },
     ),
   );
 }
