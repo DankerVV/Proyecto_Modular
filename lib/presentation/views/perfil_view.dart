@@ -1,34 +1,52 @@
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:proyecto_modular/presentation/views/perfil_views/profile_settings.dart';
 import 'package:proyecto_modular/presentation/views/perfil_views/view_card.dart';
 
 class PerfilView extends StatelessWidget {
   const PerfilView({super.key});
-  
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-        const Center(
-          child: ProfileCard(
-            //Datos de prueba
-            imagePath: 'profile_test.jpg', // Asegúrate de tener esta imagen en tu carpeta assets
-            //ImagePath ya es funcional pero solamente en testeo sin BD
-            name: 'Orlando Loredo',
-            description: 'Estudiante',
+          FutureBuilder<DocumentSnapshot>(
+            future: FirebaseFirestore.instance.collection('prueba').doc('3').get(),
+            builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+              if (snapshot.hasError) {
+                return Center(
+                  child: Text('Error al cargar los datos: ${snapshot.error}'),
+                );
+              }
+              if (!snapshot.hasData || !snapshot.data!.exists) {
+                return const Center(child: Text('No se encontraron datos'));
+              }
+
+              var data = snapshot.data!.data() as Map<String, dynamic>;
+              var name = data['name'] ?? 'Nombre no disponible';
+
+              return Center(
+                child: ProfileCard(
+                  imagePath: 'profile_test.jpg', // Asegúrate de tener esta imagen en tu carpeta assets
+                  name: name,
+                  description: 'Estudiante',
+                ),
+              );
+            },
           ),
-        ),
-        const SizedBox(height: 40,),
-        Cardinfo(context),
+          const SizedBox(height: 40,),
+          Cardinfo(context),
 
-        const SizedBox(height: 40,),
-        Settingsbutton(context),
+          const SizedBox(height: 40,),
+          Settingsbutton(context),
 
-        const SizedBox(height: 40,),
-        Logoutbutton(context),
-
+          const SizedBox(height: 40,),
+          Logoutbutton(context),
         ],
       ),
     );
@@ -40,7 +58,8 @@ class ProfileCard extends StatelessWidget {
   final String name;
   final String description;
 
-  const ProfileCard({super.key, 
+  const ProfileCard({
+    super.key, 
     required this.imagePath,
     required this.name,
     required this.description,
@@ -59,7 +78,7 @@ class ProfileCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: <Widget>[
             CircleAvatar(
-              radius:60,
+              radius: 60,
               backgroundImage: AssetImage(imagePath),
             ),
             const SizedBox(height: 10),
@@ -86,99 +105,89 @@ class ProfileCard extends StatelessWidget {
   }
 }
 
-
-Widget Cardinfo(BuildContext context){
-  return(
-    ElevatedButton(
-       onPressed: (){
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const Cardview()),
-        );
-      },
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
-      ),
-      child: const Row(
-        children: [
-          SizedBox(width: 15),
-          Text('Ver tarjetas', textAlign: TextAlign.left, style: TextStyle(fontSize: 22),),
-          SizedBox(width: 130,),
-          Icon(Icons.credit_card, size: 30,)
-        ],
-      ),
-    )
+Widget Cardinfo(BuildContext context) {
+  return ElevatedButton(
+    onPressed: () {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const Cardview()),
+      );
+    },
+    style: ElevatedButton.styleFrom(
+      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+    ),
+    child: const Row(
+      children: [
+        SizedBox(width: 15),
+        Text('Ver tarjetas', textAlign: TextAlign.left, style: TextStyle(fontSize: 22)),
+        SizedBox(width: 130),
+        Icon(Icons.credit_card, size: 30),
+      ],
+    ),
   );
 }
 
-Widget Settingsbutton(BuildContext context){
-  return(
-    ElevatedButton(
-      onPressed: (){
-        Navigator.of(context).push(
-          MaterialPageRoute(builder: (context) => const ProfileSettings()),
-        );
-      },
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
-      ),
-      child: const Row(
-        children: [
-          SizedBox(width: 15),
-          Text('Configurar Perfil', textAlign: TextAlign.left, style: TextStyle(fontSize: 22),),
-          SizedBox(width: 130,),
-          Icon(Icons.settings, size: 30,)
-        ],
-      ),
-    )
+Widget Settingsbutton(BuildContext context) {
+  return ElevatedButton(
+    onPressed: () {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const ProfileSettings()),
+      );
+    },
+    style: ElevatedButton.styleFrom(
+      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+    ),
+    child: const Row(
+      children: [
+        SizedBox(width: 15),
+        Text('Configurar Perfil', textAlign: TextAlign.left, style: TextStyle(fontSize: 22)),
+        SizedBox(width: 130),
+        Icon(Icons.settings, size: 30),
+      ],
+    ),
   );
 }
 
- 
-Widget Logoutbutton(BuildContext context){
-  return(
-    ElevatedButton(
-       onPressed: (){
-        //Esta opcion no funcionará correctamente hasta que se cree un log in
-        // Muestra el aviso de salir de la cuenta 
-        _showAlertDialog(context);
-      },
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
-      ),
-      child: const Row(
-        children: [
-          SizedBox(width: 15),
-          Text('Cerrar sesión', textAlign: TextAlign.left, style: TextStyle(fontSize: 22),),
-          SizedBox(width: 130,),
-          Icon(Icons.logout, size: 30,)
-        ],
-      ),
-    )
+Widget Logoutbutton(BuildContext context) {
+  return ElevatedButton(
+    onPressed: () {
+      _showAlertDialog(context);
+    },
+    style: ElevatedButton.styleFrom(
+      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+    ),
+    child: const Row(
+      children: [
+        SizedBox(width: 15),
+        Text('Cerrar sesión', textAlign: TextAlign.left, style: TextStyle(fontSize: 22)),
+        SizedBox(width: 130),
+        Icon(Icons.logout, size: 30),
+      ],
+    ),
   );
 }
 
 void _showAlertDialog(BuildContext context) {
   showDialog(
     context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Cerrar sesión'),
-          content: const Text('Estás saliendo de la cuenta.'),
-          actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Cierra el diálogo
-                },
-                child: const Text('Cancelar'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Salir de la cuenta 
-                },
-                child: const Text('Aceptar'),
-              ),
-          ],
-        );
-      },
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Cerrar sesión'),
+        content: const Text('Estás saliendo de la cuenta.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Cierra el diálogo
+            },
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Salir de la cuenta
+            },
+            child: const Text('Aceptar'),
+          ),
+        ],
+      );
+    },
   );
 }
