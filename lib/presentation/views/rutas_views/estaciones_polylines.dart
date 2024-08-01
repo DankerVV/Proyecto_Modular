@@ -67,6 +67,7 @@ final Set<Polyline> lineasLinea3 = {//Linea3
       LatLng(20.706493169501805, -103.36604988215178), // Circunvalación Country
       LatLng(20.692847525337264, -103.34836708125727), // La normal
       LatLng(20.684101045706548, -103.3479367682477),  // Santuario
+      LatLng(20.675171903719882, -103.34812394975752), // Plaza Universidad/ Guadalajara Centro
       LatLng(20.671094228003696, -103.34492365116569), // Independencia
       LatLng(20.66507382422731, -103.33265599492073),  // Plaza de la Bandera
       LatLng(20.65968561686749, -103.32408386669557),  // CUCEI
@@ -123,46 +124,46 @@ final Set<Polyline> lineasMacroperiferico = {//Macroperiferico
     width: 5,
     points: [
       LatLng(20.592157427507374, -103.3194382488911), // Carretera a Chapala
-        LatLng(20.58760019121495, -103.32689277829583), // Las Pintas
-        LatLng(20.58258221413513, -103.3361597260553), // Artesanos
-        LatLng(20.577187491404718, -103.36065648160492), // Adolf Horn
-        LatLng(20.579396800797102, -103.36921050080103), // Toluquilla
-        LatLng(20.586735399340963, -103.38259679660375), // 8 de Julio
-        LatLng(20.590713356321622, -103.3859044062935), // San Sebastianito
-        LatLng(20.607186986570603, -103.40106384549927), // Periferico Sur
-        LatLng(20.608523708956454, -103.40751429265997), // Terminal Sur de Autobuses
-        LatLng(20.610356939405133, -103.41509327541321), // ITESO
-        LatLng(20.61283080448815, -103.42376084901016), // López Mateos
-        LatLng(20.61685397580657, -103.42906001432932), // Agrícola
-        LatLng(20.625294041725564, -103.43360882252921), // El Briseño
-        LatLng(20.632559721131738, -103.43678584164766), // Mariano Otero
-        LatLng(20.635986404913496, -103.43821020355942), // Miramar
-        LatLng(20.64300613009851, -103.44115236411118), // Felipe Ruvalcaba
-        LatLng(20.64903482194573, -103.44364778667436), // El Colli
-        LatLng(20.65492057233334, -103.44609259978621), // Chapalita Inn
-        LatLng(20.661636599350665, -103.4488984738573), // Parque Metropolitano
-        LatLng(20.675116016088452, -103.4551799589128), // Ciudad Granja
-        LatLng(20.680743419322113, -103.45520788797698), // Ciudad Judicial
-        LatLng(20.688252842514974, -103.4553091548861), // Estadio Chivas
-        LatLng(20.69641572409654, -103.45456108116582), // Vallarta
-        LatLng(20.706455115729963, -103.4465080167455), // San Juan de Ocotlán
-        LatLng(20.710418088755247, -103.43951603306894), // 5 de Mayo
-        LatLng(20.722682985781606, -103.42116915383427), // Acueducto
-        LatLng(20.73012195688269, -103.41297014823375), // Santa Margarita
-        LatLng(20.738118669554297, -103.40315945386091), // Periférico Belenes
-        LatLng(20.740421270051563, -103.38813493874174), // San Isidro
-        LatLng(20.73932867909043, -103.38211215753417), // Centro Cultural Universitario
-        LatLng(20.73778499883564, -103.37642153719905), // Constitución
-        LatLng(20.734195021572347, -103.36304268224283), // Tabachines
-        LatLng(20.73230425087319, -103.3560536912794), // La Cantera
-        LatLng(20.73064159072937, -103.3523478406756), //Periférico Norte
-        LatLng(20.728281336332913, -103.34450368762622), // El Batán
-        LatLng(20.725711481378816, -103.3375153578507), // La Experiencia
-        LatLng(20.723023945781154, -103.33029848051714), // Rancho Nuevo
-        LatLng(20.721495076349093, -103.32615104903562), // Lomas del Paraíso
-        LatLng(20.720542617780293, -103.31729662427861), // Independencia Norte
-        LatLng(20.71803340321736, -103.31098321607206), // Zoológico Guadalajara
-        LatLng(20.713212228852043, -103.30101300695658), // Barranca de Huentitán
+      LatLng(20.58760019121495, -103.32689277829583), // Las Pintas
+      LatLng(20.58258221413513, -103.3361597260553), // Artesanos
+      LatLng(20.577187491404718, -103.36065648160492), // Adolf Horn
+      LatLng(20.579396800797102, -103.36921050080103), // Toluquilla
+      LatLng(20.586735399340963, -103.38259679660375), // 8 de Julio
+      LatLng(20.590713356321622, -103.3859044062935), // San Sebastianito
+      LatLng(20.607186986570603, -103.40106384549927), // Periferico Sur
+      LatLng(20.608523708956454, -103.40751429265997), // Terminal Sur de Autobuses
+      LatLng(20.610356939405133, -103.41509327541321), // ITESO
+      LatLng(20.61283080448815, -103.42376084901016), // López Mateos
+      LatLng(20.61685397580657, -103.42906001432932), // Agrícola
+      LatLng(20.625294041725564, -103.43360882252921), // El Briseño
+      LatLng(20.632559721131738, -103.43678584164766), // Mariano Otero
+      LatLng(20.635986404913496, -103.43821020355942), // Miramar
+      LatLng(20.64300613009851, -103.44115236411118), // Felipe Ruvalcaba
+      LatLng(20.64903482194573, -103.44364778667436), // El Colli
+      LatLng(20.65492057233334, -103.44609259978621), // Chapalita Inn
+      LatLng(20.661636599350665, -103.4488984738573), // Parque Metropolitano
+      LatLng(20.675116016088452, -103.4551799589128), // Ciudad Granja
+      LatLng(20.680743419322113, -103.45520788797698), // Ciudad Judicial
+      LatLng(20.688252842514974, -103.4553091548861), // Estadio Chivas
+      LatLng(20.69641572409654, -103.45456108116582), // Vallarta
+      LatLng(20.706455115729963, -103.4465080167455), // San Juan de Ocotlán
+      LatLng(20.710418088755247, -103.43951603306894), // 5 de Mayo
+      LatLng(20.722682985781606, -103.42116915383427), // Acueducto
+      LatLng(20.73012195688269, -103.41297014823375), // Santa Margarita
+      LatLng(20.738118669554297, -103.40315945386091), // Periférico Belenes
+      LatLng(20.740421270051563, -103.38813493874174), // San Isidro
+      LatLng(20.73932867909043, -103.38211215753417), // Centro Cultural Universitario
+      LatLng(20.73778499883564, -103.37642153719905), // Constitución
+      LatLng(20.734195021572347, -103.36304268224283), // Tabachines
+      LatLng(20.73230425087319, -103.3560536912794), // La Cantera
+      LatLng(20.73064159072937, -103.3523478406756), //Periférico Norte
+      LatLng(20.728281336332913, -103.34450368762622), // El Batán
+      LatLng(20.725711481378816, -103.3375153578507), // La Experiencia
+      LatLng(20.723023945781154, -103.33029848051714), // Rancho Nuevo
+      LatLng(20.721495076349093, -103.32615104903562), // Lomas del Paraíso
+      LatLng(20.720542617780293, -103.31729662427861), // Independencia Norte
+      LatLng(20.71803340321736, -103.31098321607206), // Zoológico Guadalajara
+      LatLng(20.713212228852043, -103.30101300695658), // Barranca de Huentitán
     ],
   ),
 };
