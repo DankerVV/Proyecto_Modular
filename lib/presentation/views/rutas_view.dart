@@ -15,13 +15,14 @@ class RutasView extends StatefulWidget {
 class _RutasViewState extends State<RutasView> {
   final locationController = Location();
   static const initialPosition = LatLng(20.66682, -103.39182);//Posicion inicial en Guadalajara
-  LatLng? currentPosition;
+  LatLng? currentPosition; // Posicion actual que se actualiza seguido
+  LatLng? finalPosition; // Para almacenar la posición seleccionada por el usuario
+  bool isPlanningRoute = false; // Bandera para controlar el modo de planificación de ruta
 
   @override
   void initState(){
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async => await fetchLocationUpdates());//Llamar funcion para pedir ubicacion
-    //estacionCercana(estaciones);
   }
 
   @override
@@ -54,13 +55,20 @@ class _RutasViewState extends State<RutasView> {
                 ...lineasMacrocalzada,
                 ...lineasMacroperiferico
               },
+              onTap: isPlanningRoute ? _handleTap : null, // Manejar el evento onTap si se está planificando la ruta
             ),
-        Positioned(
+        Positioned(// Aqui comienza el boton
           bottom: 10,
           left: 100,
           right: 100,
           child: ElevatedButton(
             onPressed: () {
+              setState(() {// Activar la bandera para escuchar el tap
+                isPlanningRoute = true;
+              });
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text('Toque en el mapa su destino')),
+              );
               print('Posición Actual: $currentPosition');
               LatLng? firstStation = estacionCercana(currentPosition!, estaciones);
             },
@@ -70,6 +78,7 @@ class _RutasViewState extends State<RutasView> {
       ],
     ),
   );
+
 
   //Solicitar permisos para acceder a la ubicación y acceder a ella de forma continua
   Future<void> fetchLocationUpdates() async{
@@ -105,4 +114,14 @@ class _RutasViewState extends State<RutasView> {
       //print('POSICION ACTUAL: $currentPosition');
     });
   }
+
+  void _handleTap(LatLng tappedPoint) {
+    setState(() {
+      finalPosition = tappedPoint;
+      isPlanningRoute = false; // Desactivar bandera después de seleccionar el destino
+    });
+    print('Destino seleccionado: $finalPosition');
+    LatLng? LastStation = estacionCercana(finalPosition!, estaciones);
+  }
+
 }
