@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:proyecto_modular/presentation/views/perfil_views/profile_settings.dart';
 import 'package:proyecto_modular/presentation/views/perfil_views/view_card.dart';
+import 'package:proyecto_modular/presentation/screens/login_screen.dart';
 
 class PerfilView extends StatelessWidget {
   const PerfilView({super.key});
@@ -176,13 +177,16 @@ void _showAlertDialog(BuildContext context) {
         actions: [
           TextButton(
             onPressed: () {
-              Navigator.of(context).pop(); // Cierra el diálogo
+              Navigator.of(context).pop(); // No salir de la cuenta
             },
             child: const Text('Cancelar'),
           ),
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(); // Salir de la cuenta
+               Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const LoginScreen()),
+                );
             },
             child: const Text('Aceptar'),
           ),
