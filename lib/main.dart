@@ -11,6 +11,7 @@ import 'package:proyecto_modular/presentation/screens/login_screen.dart';
 import 'package:proyecto_modular/presentation/screens/auth_service.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+//const googlemapsApi = "AIzaSyDRoFD0XhW_tli0D2w0hidiAHics-V2mec";
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
