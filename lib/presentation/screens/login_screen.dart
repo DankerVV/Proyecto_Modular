@@ -44,7 +44,7 @@ class LoginScreen extends HookConsumerWidget {
                   );
                 }
               },
-              child: const Text('Login'),
+              child: const Text('Ingresar'),
             ),
             TextButton(
               onPressed: () {
