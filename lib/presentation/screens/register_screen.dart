@@ -4,12 +4,12 @@ import 'package:proyecto_modular/presentation/screens/auth_service.dart';
 import 'package:proyecto_modular/presentation/screens/login_screen.dart';
 
 
-
 class RegisterScreen extends HookConsumerWidget {
   const RegisterScreen({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final nameController = TextEditingController();
     final emailController = TextEditingController();
     final passwordController = TextEditingController();
     final authService = ref.watch(authServiceProvider);
@@ -23,6 +23,10 @@ class RegisterScreen extends HookConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            TextField(
+              controller: nameController,
+              decoration: const InputDecoration(labelText: 'Nombre'),
+            ),
             TextField(
               controller: emailController,
               decoration: const InputDecoration(labelText: 'Correo'),
@@ -49,7 +53,7 @@ class RegisterScreen extends HookConsumerWidget {
                   );
                 }
               },
-              child: const Text('Register'),
+              child: const Text('Registrarse'),
             ),
           ],
         ),
