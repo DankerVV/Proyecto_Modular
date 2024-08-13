@@ -13,8 +13,8 @@ class PerfilView extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          FutureBuilder<DocumentSnapshot>(
-            future: FirebaseFirestore.instance.collection('prueba').doc('3').get(),
+          StreamBuilder<DocumentSnapshot>(
+            stream: FirebaseFirestore.instance.collection('Users').doc('jDexl7M7gYPkpvoNJK1o').snapshots(),
             builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
