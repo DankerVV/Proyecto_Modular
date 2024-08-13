@@ -1,4 +1,3 @@
-
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Node{
@@ -24,6 +23,16 @@ class Graph{
 
   List<Edge> getEdgesFromNode(Node node){
     return edges.where((edge) => edge.start == node || edge.end == node).toList();// grafo bidireccional
+  }
+
+  double getEdgeCost(Node start, Node end) {
+    for (Edge edge in edges) {
+      if ((edge.start == start && edge.end == end) || 
+          (edge.start == end && edge.end == start)) { // grafo bidireccional
+        return edge.time;
+      }
+    }
+    throw Exception('ERROR: No se encontró una arista entre los nodos ${start.name} y ${end.name}');
   }
 }
 
@@ -163,9 +172,9 @@ double tiempoL3 = 250;// 75 min entre 18 estaciones
 double tiempoMc = 102;// 46 min entre 27 estaciones
 double tiempoMp = 128;// 90 min entre 42 estaciones
 
-// Vamos a conectar los nodos
+// Vamos a conectar los nodos entre sí
 final List<Edge> connections = [
-  // Linea 1
+  // Linea 1: Periferico Sur -> Auditorio
   Edge(stations[0], stations[1], tiempoL1),
   Edge(stations[1], stations[2], tiempoL1),
   Edge(stations[2], stations[3], tiempoL1),
@@ -185,8 +194,29 @@ final List<Edge> connections = [
   Edge(stations[16], stations[17],tiempoL1),
   Edge(stations[17], stations[18],tiempoL1),
   Edge(stations[18], stations[19],tiempoL1),
+
+  // Linea 1: Auditorio -> Periferico Sur 
+  Edge(stations[19], stations[18], tiempoL1),
+  Edge(stations[18], stations[17], tiempoL1),
+  Edge(stations[17], stations[16], tiempoL1),
+  Edge(stations[16], stations[15], tiempoL1),
+  Edge(stations[15], stations[14], tiempoL1),
+  Edge(stations[14], stations[13], tiempoL1),
+  Edge(stations[13], stations[12], tiempoL1),
+  Edge(stations[12], stations[11], tiempoL1),
+  Edge(stations[11], stations[10], tiempoL1),
+  Edge(stations[10], stations[9], tiempoL1),
+  Edge(stations[9], stations[8],tiempoL1),
+  Edge(stations[8], stations[7],tiempoL1),
+  Edge(stations[7], stations[6],tiempoL1),
+  Edge(stations[6], stations[5],tiempoL1),
+  Edge(stations[5], stations[4],tiempoL1),
+  Edge(stations[4], stations[3],tiempoL1),
+  Edge(stations[3], stations[2],tiempoL1),
+  Edge(stations[2], stations[1],tiempoL1),
+  Edge(stations[1], stations[0],tiempoL1),
   
-  // Linea 2
+  // Linea 2: Juárez -> Tetlán
   Edge(stations[11], stations[20],tiempoL2),
   Edge(stations[20], stations[21],tiempoL2),
   Edge(stations[21], stations[22],tiempoL2),
@@ -197,7 +227,18 @@ final List<Edge> connections = [
   Edge(stations[26], stations[27],tiempoL2),
   Edge(stations[27], stations[28],tiempoL2),
 
-  // Linea 3
+  // Linea 2: Tetlán -> Juárez
+  Edge(stations[28], stations[27],tiempoL2),
+  Edge(stations[27], stations[26],tiempoL2),
+  Edge(stations[26], stations[25],tiempoL2),
+  Edge(stations[25], stations[24],tiempoL2),
+  Edge(stations[24], stations[23],tiempoL2),
+  Edge(stations[23], stations[22],tiempoL2),
+  Edge(stations[22], stations[21],tiempoL2),
+  Edge(stations[21], stations[20],tiempoL2),
+  Edge(stations[20], stations[11],tiempoL2),
+
+  // Linea 3: Arcos de Zapopan -> Central de Autobuses
   Edge(stations[29], stations[30],tiempoL3),
   Edge(stations[30], stations[31],tiempoL3),
   Edge(stations[31], stations[32],tiempoL3),
@@ -216,7 +257,26 @@ final List<Edge> connections = [
   Edge(stations[42], stations[43],tiempoL3),
   Edge(stations[43], stations[44],tiempoL3),
 
-  // Macro Calzada
+  // Linea 3: Central de Autobuses -> Arcos de Zapopan
+  Edge(stations[44], stations[43],tiempoL3),
+  Edge(stations[43], stations[42],tiempoL3),
+  Edge(stations[42], stations[41],tiempoL3),
+  Edge(stations[41], stations[40],tiempoL3),
+  Edge(stations[40], stations[39],tiempoL3),
+  Edge(stations[39], stations[38],tiempoL3),
+  Edge(stations[38], stations[37],tiempoL3),
+  Edge(stations[37], stations[20],tiempoL3),
+  Edge(stations[20], stations[36],tiempoL3),
+  Edge(stations[36], stations[35],tiempoL3),
+  Edge(stations[35], stations[14],tiempoL3),
+  Edge(stations[14], stations[34],tiempoL3),
+  Edge(stations[34], stations[33],tiempoL3),
+  Edge(stations[33], stations[32],tiempoL3),
+  Edge(stations[32], stations[31],tiempoL3),
+  Edge(stations[31], stations[30],tiempoL3),
+  Edge(stations[30], stations[29],tiempoL3),
+
+  // Macro Calzada: Fray Angélico -> Mirador
   Edge(stations[45], stations[46],tiempoMc),
   Edge(stations[46], stations[47],tiempoMc),
   Edge(stations[47], stations[48],tiempoMc),
@@ -244,7 +304,35 @@ final List<Edge> connections = [
   Edge(stations[67], stations[68],tiempoMc),
   Edge(stations[68], stations[69],tiempoMc),
 
-  // Macro Periférico
+  // Macro Calzada: Mirador -> Fray Angélico
+  Edge(stations[69], stations[68],tiempoMc),
+  Edge(stations[68], stations[67],tiempoMc),
+  Edge(stations[67], stations[66],tiempoMc),
+  Edge(stations[66], stations[65],tiempoMc),
+  Edge(stations[65], stations[64],tiempoMc),
+  Edge(stations[64], stations[63],tiempoMc),
+  Edge(stations[63], stations[62],tiempoMc),
+  Edge(stations[62], stations[61],tiempoMc),
+  Edge(stations[61], stations[60],tiempoMc),
+  Edge(stations[60], stations[59],tiempoMc),
+  Edge(stations[59], stations[58],tiempoMc),
+  Edge(stations[58], stations[21],tiempoMc),
+  Edge(stations[21], stations[37],tiempoMc),
+  Edge(stations[37], stations[57],tiempoMc),
+  Edge(stations[57], stations[56],tiempoMc),
+  Edge(stations[56], stations[55],tiempoMc),
+  Edge(stations[55], stations[54],tiempoMc),
+  Edge(stations[54], stations[53],tiempoMc),
+  Edge(stations[53], stations[52],tiempoMc),
+  Edge(stations[52], stations[51],tiempoMc),
+  Edge(stations[51], stations[50],tiempoMc),
+  Edge(stations[50], stations[49],tiempoMc),
+  Edge(stations[49], stations[48],tiempoMc),
+  Edge(stations[48], stations[47],tiempoMc),
+  Edge(stations[47], stations[46],tiempoMc),
+  Edge(stations[46], stations[45],tiempoMc),
+
+  // Macro Periférico: Carretera a Chapala -> Barranca de Huentitán
   Edge(stations[70], stations[71],tiempoMp),
   Edge(stations[71], stations[72],tiempoMp),
   Edge(stations[72], stations[73],tiempoMp),
@@ -285,6 +373,48 @@ final List<Edge> connections = [
   Edge(stations[104], stations[66],tiempoMp),
   Edge(stations[66], stations[105],tiempoMp),
   Edge(stations[105], stations[106],tiempoMp),
+
+  // Macro Periférico: Barranca de Huentitán ->  Carretera a Chapala
+  Edge(stations[106], stations[105],tiempoMp),
+  Edge(stations[105], stations[66],tiempoMp),
+  Edge(stations[66], stations[104],tiempoMp),
+  Edge(stations[104], stations[103],tiempoMp),
+  Edge(stations[103], stations[102],tiempoMp),
+  Edge(stations[102], stations[101],tiempoMp),
+  Edge(stations[101], stations[18],tiempoMp),
+  Edge(stations[18], stations[100],tiempoMp),
+  Edge(stations[100], stations[99],tiempoMp),
+  Edge(stations[99], stations[98],tiempoMp),
+  Edge(stations[98], stations[97],tiempoMp),
+  Edge(stations[97], stations[96],tiempoMp),
+  Edge(stations[96], stations[30],tiempoMp),
+  Edge(stations[30], stations[95],tiempoMp),
+  Edge(stations[95], stations[94],tiempoMp),
+  Edge(stations[94], stations[93],tiempoMp),
+  Edge(stations[93], stations[92],tiempoMp),
+  Edge(stations[92], stations[91],tiempoMp),
+  Edge(stations[91], stations[90],tiempoMp),
+  Edge(stations[90], stations[89],tiempoMp),
+  Edge(stations[89], stations[88],tiempoMp),
+  Edge(stations[88], stations[87],tiempoMp),
+  Edge(stations[87], stations[86],tiempoMp),
+  Edge(stations[86], stations[85],tiempoMp),
+  Edge(stations[85], stations[84],tiempoMp),
+  Edge(stations[84], stations[83],tiempoMp),
+  Edge(stations[83], stations[82],tiempoMp),
+  Edge(stations[82], stations[81],tiempoMp),
+  Edge(stations[81], stations[80],tiempoMp),
+  Edge(stations[80], stations[79],tiempoMp),
+  Edge(stations[79], stations[78],tiempoMp),
+  Edge(stations[78], stations[77],tiempoMp),
+  Edge(stations[77], stations[0],tiempoMp),
+  Edge(stations[0], stations[76],tiempoMp),
+  Edge(stations[76], stations[75],tiempoMp),
+  Edge(stations[75], stations[74],tiempoMp),
+  Edge(stations[74], stations[73],tiempoMp),
+  Edge(stations[73], stations[72],tiempoMp),
+  Edge(stations[72], stations[71],tiempoMp),
+  Edge(stations[71], stations[70],tiempoMp),
 ];
 
-final Graph transportGraph = Graph(stations, connections);
+final Graph grafoTransporte = Graph(stations, connections);

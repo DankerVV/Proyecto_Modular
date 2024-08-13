@@ -4,6 +4,8 @@ import 'package:location/location.dart';
 import 'package:proyecto_modular/presentation/views/rutas_views/estacion_cercana.dart';
 import 'package:proyecto_modular/presentation/views/rutas_views/estaciones_coordenadas.dart';
 import 'package:proyecto_modular/presentation/views/rutas_views/estaciones_polylines.dart';
+import 'package:proyecto_modular/presentation/views/rutas_views/genetic_algorithm.dart';
+import 'package:proyecto_modular/presentation/views/rutas_views/graph.dart';
 
 class RutasView extends StatefulWidget {
   const RutasView({super.key});
@@ -17,7 +19,9 @@ class _RutasViewState extends State<RutasView> {
   static const initialPosition = LatLng(20.66682, -103.39182);//Posicion inicial en Guadalajara
   LatLng? currentPosition; // Posicion actual que se actualiza seguido
   LatLng? finalPosition; // Para almacenar la posición seleccionada por el usuario
+  LatLng? lastStation;
   bool isPlanningRoute = false; // Bandera para controlar el modo de planificación de ruta
+  bool _isCalculating = false;
 
   @override
   void initState(){
@@ -69,13 +73,18 @@ class _RutasViewState extends State<RutasView> {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Toque en el mapa su destino')),
               );
-              print('Posición Actual: $currentPosition');
-              LatLng? firstStation = estacionCercana(currentPosition!, estaciones);
+              // print('Posición Actual: $currentPosition');
+              // LatLng? firstStation = estacionCercana(currentPosition!, estaciones);
+              // List<LatLng> bestPath = antColony(firstStation, lastStation, grafoTransporte);
+              // print('MEJOR RUTA: $bestPath');
+              // drawPath(bestPath);
             },
             child: const Text('Planear una ruta', style: TextStyle(fontSize: 18),),
           ),
         ),
+        if (_isCalculating) const Center(child: CircularProgressIndicator()), 
       ],
+      
     ),
   );
 
@@ -121,7 +130,36 @@ class _RutasViewState extends State<RutasView> {
       isPlanningRoute = false; // Desactivar bandera después de seleccionar el destino
     });
     print('Destino seleccionado: $finalPosition');
-    LatLng? LastStation = estacionCercana(finalPosition!, estaciones);
+    lastStation = estacionCercana(finalPosition!, estaciones);
+    print('Posición Actual: $currentPosition');
+    LatLng? firstStation = estacionCercana(currentPosition!, estaciones);
+
+    findBestRoute(firstStation, lastStation, grafoTransporte);
+
+    // List<LatLng> bestPath = antColony(firstStation, lastStation, grafoTransporte);
+    // print('MEJOR RUTA: $bestPath');
+    //drawPath(bestPath);
   }
 
+// hilo aparte para calcular el mejor camino sin que se frene la aplicacion
+  Future<void> findBestRoute(LatLng? firstStation, LatLng? lastStation, Graph graph) async {
+    if (lastStation != null) {
+      setState(() {
+        _isCalculating = true; // Muestra el indicador de progreso
+      });
+      // Ejecutar el cálculo en segundo plano
+      List<LatLng> bestPath = await computeAntColony(firstStation, lastStation, grafoTransporte);
+      print('MEJOR RUTA: $bestPath');
+      //_updateBestRoute(bestPath);
+      setState(() {
+        _isCalculating = false; // Ocultar el indicador de progreso
+      });
+    }
+  }
+
+  Future<List<LatLng>> computeAntColony(LatLng? startStation, LatLng? endStation, Graph graph) async {
+    return await Future.delayed(const Duration(milliseconds: 100), () {
+      return antColony(startStation, endStation, graph);
+    });
+  }
 }

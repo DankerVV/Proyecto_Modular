@@ -167,3 +167,13 @@ final Set<Polyline> lineasMacroperiferico = {//Macroperiferico
     ],
   ),
 };
+
+
+void drawPath (List<LatLng> bestPath){
+  Polyline(
+    polylineId: const PolylineId('bestPath'),
+    color: Colors.black,
+    width: 3,
+    points: bestPath
+  );
+}
