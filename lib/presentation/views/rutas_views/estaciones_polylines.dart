@@ -36,7 +36,7 @@ final Set<Polyline> lineasLinea1 = {//Línea 1
 final Set<Polyline> lineasLinea2 = {//Linea2
   const Polyline(
     polylineId: PolylineId('linea2'),
-    color: Colors.blue,
+    color: Color.fromARGB(255, 3, 103, 186),
     width: 5,
     points: [
       LatLng(20.674599651060475, -103.3547623681697), //Juárez
@@ -56,7 +56,7 @@ final Set<Polyline> lineasLinea2 = {//Linea2
 final Set<Polyline> lineasLinea3 = {//Linea3
   const Polyline(
     polylineId: PolylineId('linea3'),
-    color: Colors.green,
+    color: Color.fromARGB(255, 20, 129, 22),
     width: 5,
     points: [
       LatLng(20.741154079804534, -103.40743618393991), // Arcos de Zapopan
@@ -83,7 +83,7 @@ final Set<Polyline> lineasLinea3 = {//Linea3
 final Set<Polyline> lineasMacrocalzada = {//Macrocalzada
   const Polyline(
     polylineId: PolylineId('macrocalzada'),
-    color: Colors.orange,
+    color: Colors.pink,
     width: 5,
     points: [
       LatLng(20.60877646230348, -103.34264849016255), // Fray Angélico
@@ -168,12 +168,3 @@ final Set<Polyline> lineasMacroperiferico = {//Macroperiferico
   ),
 };
 
-
-void drawPath (List<LatLng> bestPath){
-  Polyline(
-    polylineId: const PolylineId('bestPath'),
-    color: Colors.black,
-    width: 3,
-    points: bestPath
-  );
-}

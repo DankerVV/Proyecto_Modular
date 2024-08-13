@@ -11,8 +11,8 @@ List<LatLng> antColony(LatLng? startPosition, LatLng? endPosition, Graph graph) 
   Node endNode = graph.nodes.firstWhere((node) => node.position == endPosition);
 
   // Parámetros básicos del algoritmo
-  int numAnts = 10;
-  int numIterations = 10;
+  int numAnts = 20;
+  int numIterations = 25;
   double alpha = 1.0;
   double beta = 2.0;
   double evaporationRate = 0.5;
