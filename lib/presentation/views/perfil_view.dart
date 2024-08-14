@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:proyecto_modular/presentation/views/perfil_views/profile_settings.dart';
 import 'package:proyecto_modular/presentation/views/perfil_views/view_card.dart';
 import 'package:proyecto_modular/presentation/screens/login_screen.dart';
@@ -9,12 +10,18 @@ class PerfilView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final user = FirebaseAuth.instance.currentUser;
+
+    if (user == null) {
+      return const Center(child: Text('No se encontró ningún usuario logueado'));
+    }
+
     return SafeArea(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           StreamBuilder<DocumentSnapshot>(
-            stream: FirebaseFirestore.instance.collection('Users').doc('jDexl7M7gYPkpvoNJK1o').snapshots(),
+            stream: FirebaseFirestore.instance.collection('Users').doc(user.uid).snapshots(),
             builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
               if (snapshot.connectionState == ConnectionState.waiting) {
                 return const Center(child: CircularProgressIndicator());
@@ -182,11 +189,12 @@ void _showAlertDialog(BuildContext context) {
             child: const Text('Cancelar'),
           ),
           TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Salir de la cuenta
-               Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const LoginScreen()),
-                );
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut(); 
+              Navigator.of(context).pop(); // Cierra el diálogo
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(builder: (context) => const LoginScreen()), // Te redirige pantalla de inicio de sesión
+              );
             },
             child: const Text('Aceptar'),
           ),
@@ -195,3 +203,4 @@ void _showAlertDialog(BuildContext context) {
     },
   );
 }
+
