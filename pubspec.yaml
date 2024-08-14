@@ -49,8 +49,6 @@ dependencies:
   firebase_auth: ^4.8.0
   cloud_firestore: ^4.17.5
   
-
-
   #Dependencias maps
   google_maps_flutter: ^2.7.0
   flutter_polyline_points: ^2.1.0
