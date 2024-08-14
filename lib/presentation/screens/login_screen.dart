@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:proyecto_modular/presentation/screens/auth_service.dart';
 import 'package:proyecto_modular/presentation/screens/register_screen.dart';
+import 'package:proyecto_modular/presentation/screens/main_screen.dart'; 
 
 class LoginScreen extends HookConsumerWidget {
   const LoginScreen({super.key});
@@ -15,6 +16,7 @@ class LoginScreen extends HookConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Iniciar sesión'),
+        automaticallyImplyLeading: false, 
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -34,11 +36,18 @@ class LoginScreen extends HookConsumerWidget {
             ElevatedButton(
               onPressed: () async {
                 try {
+                  // Inicia sesión con las credenciales proporcionadas
                   await authService.signIn(
                     emailController.text,
                     passwordController.text,
                   );
+
+                  // Si el inicio de sesión es exitoso, redirige a la pantalla de inicio
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const MainScreen()),
+                  );
                 } catch (e) {
+                  // Si ocurre un error, muestra un mensaje de error
                   ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text(e.toString())),
                   );
@@ -48,11 +57,12 @@ class LoginScreen extends HookConsumerWidget {
             ),
             TextButton(
               onPressed: () {
+                // Redirige a la pantalla de registro si el usuario no tiene una cuenta
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (context) => const RegisterScreen()),
                 );
               },
-              child: const Text('¿No tienes una cuenta? Registrate'),
+              child: const Text('¿No tienes una cuenta? Regístrate'),
             ),
           ],
         ),

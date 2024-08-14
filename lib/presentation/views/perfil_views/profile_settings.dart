@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart'; 
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:proyecto_modular/presentation/screens/login_screen.dart';
 
 class ProfileSettings extends StatefulWidget {
   const ProfileSettings({super.key});
@@ -22,13 +23,13 @@ class _ProfileSettingsState extends State<ProfileSettings> {
   }
 
   Future<void> _getUserId() async {
-    User? user = FirebaseAuth.instance.currentUser; // Obtén el usuario actual
+    User? user = FirebaseAuth.instance.currentUser; // Obtener el usuario actual
     if (user != null) {
       _userId = user.uid;
       _loadUserData();
     } else {
       // Manejar el caso en que el usuario no esté autenticado
-      print("No user logged in");
+      print("El usuario no inicio sesión");
     }
   }
 
@@ -37,7 +38,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
       try {
         DocumentSnapshot userDoc = await FirebaseFirestore.instance
             .collection('Users')
-            .doc('jDexl7M7gYPkpvoNJK1o')
+            .doc(_userId)  // UID del usuario actual
             .get();
 
         if (userDoc.exists) {
@@ -56,7 +57,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
       try {
         await FirebaseFirestore.instance
             .collection('Users')
-            .doc('jDexl7M7gYPkpvoNJK1o')
+            .doc(_userId)  // UID del usuario actual
             .update({
           'name': _name,
         });
@@ -120,9 +121,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
   }
 }
 
-@override
-
-//Eliminar Cuenta 
+// Eliminar Cuenta 
 Widget Deleteaccount(BuildContext context){
   return(
     ElevatedButton(
@@ -146,25 +145,46 @@ Widget Deleteaccount(BuildContext context){
 void _showAlertDialog(BuildContext context) {
   showDialog(
     context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Eliminar cuenta'),
-          content: const Text('Una vez borrada la cuenta esta no se podrá recuperar. ¿Estás seguro de ello?'),
-          actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Cierra el diálogo
-                },
-                child: const Text('Cancelar'),
-              ),
-              TextButton(
-                onPressed: () {
-                  Navigator.of(context).pop(); // Salir de la cuenta 
-                },
-                child: const Text('Aceptar'),
-              ),
-          ],
-        );
-      },
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Eliminar cuenta'),
+        content: const Text('Una vez borrada la cuenta esta no se podrá recuperar. ¿Estás seguro de ello?'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // Cierra el diálogo
+            },
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () async {
+              try {
+                // Obtener el usuario actual
+                User? user = FirebaseAuth.instance.currentUser;
+
+                if (user != null) {
+                  // Borrar los datos del usuario en la base de datos
+                  await FirebaseFirestore.instance.collection('Users').doc(user.uid).delete();
+
+                  // Eliminar la cuenta del usuario
+                  await user.delete();
+
+                  // ir a la pantalla de inicio de sesión
+                  Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => const LoginScreen()),
+                  );
+                }
+              } catch (e) {
+                // Manejar errores (como la necesidad de volver a autenticarse antes de eliminar la cuenta)
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text('Error al eliminar la cuenta: ${e.toString()}')),
+                );
+              }
+            },
+            child: const Text('Aceptar'),
+          ),
+        ],
+      );
+    },
   );
 }

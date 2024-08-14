@@ -14,12 +14,12 @@ class AuthService {
     await _auth.signOut();
   }
 
-  Future<void> register(String email, String password) async {
-    await _auth.createUserWithEmailAndPassword(email: email, password: password);
+  // Modificado para devolver UserCredential
+  Future<UserCredential> register(String email, String password) async {
+    return await _auth.createUserWithEmailAndPassword(email: email, password: password);
   }
 }
 
 final authServiceProvider = Provider<AuthService>((ref) {
   return AuthService();
 });
-
