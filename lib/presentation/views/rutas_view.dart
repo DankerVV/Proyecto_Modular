@@ -4,6 +4,8 @@ import 'package:location/location.dart';
 import 'package:proyecto_modular/presentation/views/rutas_views/estacion_cercana.dart';
 import 'package:proyecto_modular/presentation/views/rutas_views/estaciones_coordenadas.dart';
 import 'package:proyecto_modular/presentation/views/rutas_views/estaciones_polylines.dart';
+import 'package:proyecto_modular/presentation/views/rutas_views/genetic_algorithm.dart';
+import 'package:proyecto_modular/presentation/views/rutas_views/graph.dart';
 
 class RutasView extends StatefulWidget {
   const RutasView({super.key});
@@ -17,7 +19,18 @@ class _RutasViewState extends State<RutasView> {
   static const initialPosition = LatLng(20.66682, -103.39182);//Posicion inicial en Guadalajara
   LatLng? currentPosition; // Posicion actual que se actualiza seguido
   LatLng? finalPosition; // Para almacenar la posición seleccionada por el usuario
+  LatLng? lastStation;
   bool isPlanningRoute = false; // Bandera para controlar el modo de planificación de ruta
+  bool _isCalculating = false;
+  double tiempoEstimado = 0;
+  Set<Polyline> _polylines = {
+    ...lineasLinea1,
+    ...lineasLinea2,
+    ...lineasLinea3,
+    ...lineasMacrocalzada,
+    ...lineasMacroperiferico
+  };
+  Set<Marker> _markers = {};
 
   @override
   void initState(){
@@ -32,31 +45,38 @@ class _RutasViewState extends State<RutasView> {
         currentPosition == null
           ? const Center(child: CircularProgressIndicator())
           : GoogleMap(
-              initialCameraPosition: const CameraPosition(
-                target: initialPosition,
-                zoom: 12,
-              ),
-              markers: {
-                Marker(
-                  markerId: const MarkerId('currentLocation'),
-                  icon: BitmapDescriptor.defaultMarker,
-                  position: currentPosition!,
-                ),
-                //   ...estacionesLinea1,
-                //   ...estacionesLinea2,
-                //   ...estacionesLinea3,
-                //   ...estacionesMacrocalzada,
-                //   ...estacionesMacroperiferico
-              },
-              polylines: {
-                ...lineasLinea1,
-                ...lineasLinea2,
-                ...lineasLinea3,
-                ...lineasMacrocalzada,
-                ...lineasMacroperiferico
-              },
-              onTap: isPlanningRoute ? _handleTap : null, // Manejar el evento onTap si se está planificando la ruta
+            initialCameraPosition: const CameraPosition(
+              target: initialPosition,
+              zoom: 12,
             ),
+            markers: {
+              Marker(
+                markerId: const MarkerId('currentLocation'),
+                icon: BitmapDescriptor.defaultMarker,
+                position: currentPosition!,
+                infoWindow: const InfoWindow(
+                  title: 'Mi ubicación',
+                ),
+              ),
+              ..._markers,
+            },
+            polylines: _polylines,
+            onTap: isPlanningRoute ? _handleTap : null, // Manejar el evento onTap si se está planificando la ruta
+          ),
+           SafeArea(
+            child: DecoratedBox(
+              decoration: const BoxDecoration(
+                color: Color.fromARGB(255, 26, 123, 30),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(4.0), // Agrega relleno alrededor del texto
+                child: Text(
+                  'Tiempo estimado: ${tiempoEstimado.toStringAsFixed(0)}  min',
+                  style: const TextStyle(fontSize: 20, color: Colors.white),
+                ),
+              ),
+            ),
+          ),
         Positioned(// Aqui comienza el boton
           bottom: 10,
           left: 100,
@@ -65,17 +85,25 @@ class _RutasViewState extends State<RutasView> {
             onPressed: () {
               setState(() {// Activar la bandera para escuchar el tap
                 isPlanningRoute = true;
+                _polylines = {
+                  ...lineasLinea1,
+                  ...lineasLinea2,
+                  ...lineasLinea3,
+                  ...lineasMacrocalzada,
+                  ...lineasMacroperiferico
+                };
+                _markers = {};
               });
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(content: Text('Toque en el mapa su destino')),
               );
-              print('Posición Actual: $currentPosition');
-              LatLng? firstStation = estacionCercana(currentPosition!, estaciones);
             },
             child: const Text('Planear una ruta', style: TextStyle(fontSize: 18),),
           ),
         ),
+        if (_isCalculating) const Center(child: CircularProgressIndicator()),
       ],
+      
     ),
   );
 
@@ -92,7 +120,6 @@ class _RutasViewState extends State<RutasView> {
     else{
       return;
     }
-
     permissionGranted = await locationController.hasPermission();
     if(permissionGranted == PermissionStatus.denied){
       permissionGranted = await locationController.requestPermission();
@@ -100,7 +127,6 @@ class _RutasViewState extends State<RutasView> {
     if(permissionGranted != PermissionStatus.granted){
       return;
     }
-
     locationController.onLocationChanged.listen((currentLocation){
       if(currentLocation.latitude != null && 
       currentLocation.longitude != null){
@@ -111,17 +137,94 @@ class _RutasViewState extends State<RutasView> {
             );
         });
       }
-      //print('POSICION ACTUAL: $currentPosition');
     });
   }
 
+  // Escuchar dónde toca la pantalla el usuario y obtener las coordenadas
   void _handleTap(LatLng tappedPoint) {
     setState(() {
       finalPosition = tappedPoint;
       isPlanningRoute = false; // Desactivar bandera después de seleccionar el destino
     });
-    print('Destino seleccionado: $finalPosition');
-    LatLng? LastStation = estacionCercana(finalPosition!, estaciones);
+    //print('Destino seleccionado: $finalPosition');
+    lastStation = estacionCercana(finalPosition!, estaciones);
+    //print('Posición Actual: $currentPosition');
+    LatLng? firstStation = estacionCercana(currentPosition!, estaciones);
+    drawMarkers(firstStation, lastStation);
+    findBestRoute(firstStation, lastStation, grafoTransporte);
   }
 
+  // Hilo aparte para calcular el mejor camino sin que se frene la aplicacion
+  Future<void> findBestRoute(LatLng? firstStation, LatLng? lastStation, Graph graph) async {
+    if (lastStation != null) {
+      setState(() {
+        _isCalculating = true; // Muestra el indicador de progreso
+      });
+      BestPathResult antResult = await computeAntColony(firstStation, lastStation, grafoTransporte);// Ejecutar el cálculo en un hilo
+      //print('MEJOR RUTA: $bestPath');
+      drawPath(antResult.bestPath);
+      tiempoEstimado = antResult.bestCost + 5; // agregamos 5 minutos en lo que pasa el tren o camion
+      setState(() {
+        _isCalculating = false; // Ocultar el indicador de progreso
+      });
+    }
+  }
+  Future<BestPathResult> computeAntColony(LatLng? startStation, LatLng? endStation, Graph graph) async {
+    return await Future.delayed(const Duration(milliseconds: 100), () {
+      return antColony(startStation, endStation, graph);
+    });
+  }
+
+  // Dibujar la mejor ruta encontrada por las hormigas con polylines
+  void drawPath(List<LatLng> bestPath) {
+    setState(() {
+      _polylines.add(
+        Polyline(
+          polylineId: const PolylineId('bestPath'),
+          color: Colors.yellow,
+          width: 3,
+          points: bestPath,
+        ),
+      );
+    });
+  }
+  // Dibujar los markers de la primera y utlima estacion
+  void drawMarkers(LatLng? firstStation, LatLng? lastStation) {
+    setState(() {
+      String firstStationName = findNodeName(firstStation, grafoTransporte);
+      String lastStationName = findNodeName(lastStation, grafoTransporte);
+      _markers.add(
+        Marker(
+          markerId: const MarkerId('firstStation'),
+          icon: BitmapDescriptor.defaultMarker,
+          position: firstStation!,
+          infoWindow: InfoWindow(
+            title: firstStationName,
+            snippet: 'Esta es la primera estación',
+          ),
+        ),
+      );
+      _markers.add(
+        Marker(
+          markerId: const MarkerId('lastStation'),
+          icon: BitmapDescriptor.defaultMarker,
+          position: lastStation!,
+          infoWindow: InfoWindow(
+            title: lastStationName,
+            snippet: 'Esta es la última estación',
+          ),
+        ),
+      );
+    });
+  }
+
+  // Encontrar el nombre de la estacion segun sus coordenadas
+  String findNodeName(LatLng? targetPosition, Graph graph) {
+  for (Node node in graph.nodes) {
+    if (node.position == targetPosition) {
+      return node.name;
+    }
+  }
+  throw Exception('No se encontró un nodo con la posición dada');
+}
 }
