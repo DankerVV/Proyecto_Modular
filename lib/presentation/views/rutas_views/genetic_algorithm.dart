@@ -11,11 +11,11 @@ List<LatLng> antColony(LatLng? startPosition, LatLng? endPosition, Graph graph) 
   Node endNode = graph.nodes.firstWhere((node) => node.position == endPosition);
 
   // Parámetros básicos del algoritmo
-  int numAnts = 20;
-  int numIterations = 25;
-  double alpha = 1.0;
-  double beta = 2.0;
-  double evaporationRate = 0.5;
+  int numAnts = 100;
+  int numIterations = 50;
+  double alpha = 1.0; // Importancia de las feromonas en la decision de la hormiga
+  double beta = 5.0; // Importancia del costo en la decision de la hormiga
+  double evaporationRate = 0.8;
   double Q = 100.0;
 
   // Inicializar los niveles de feromonas, es una matriz, una lista de listas
@@ -95,17 +95,28 @@ List<LatLng> antColony(LatLng? startPosition, LatLng? endPosition, Graph graph) 
       List<Node> path = [startNode]; // path almacena la ruta de la hormiga, inicia con startNode
       Set<Node> visited = {startNode}; // visited almacena los nodos ya visitados, empezando por el startNode
       double cost = 0.0; // el costo del camino inicia en cero
+      List<String> previousLines = []; // nos ayuda a detectar tranbordos para agregar un costo adicional
 
       while (path.last != endNode) { // bucle para construir el camino, termina cuando llega al nodo final.
         Node currentNode = path.last;
         Node nextNode = selectNextNode(currentNode, visited);
 
-        print('Hormiga en nodo: ${path.last.name}, Próximo nodo: ${nextNode.name}');
+        //print('Hormiga en nodo: ${path.last.name}, Próximo nodo: ${nextNode.name}');
+
+        // Verificar si es posible transbordar
+        if (nextNode.line.contains('-')) {
+          previousLines = extractLines(path.last.line); // Guarda todas las líneas de transbordo
+        }
+        // Verificar si se transbordó
+        if (previousLines.isNotEmpty && !previousLines.contains(nextNode.line)) {
+          // Si la línea del siguiente nodo no está en las líneas de transbordo, es un transbordo
+          cost += 300; // Aplica un costo adicional por el transbordo
+        }
 
         bool isDeadEnd = graph.getEdgesFromNode(currentNode).length == 1;
   
         if (visited.contains(nextNode) || isDeadEnd) {
-          print('Callejón sin salida, la hormiga ha muerto');
+          //print('Callejón sin salida, la hormiga ha muerto');
           break; // Termina el camino si hay un callejón sin salida
         }
         path.add(nextNode);
@@ -116,10 +127,10 @@ List<LatLng> antColony(LatLng? startPosition, LatLng? endPosition, Graph graph) 
       if (path.last == endNode) { // Si la hormiga llegó a su destino
         allPaths.add(path);
         costs.add(cost);
-        print('La hormiga llegó a su destino');
+        //print('La hormiga llegó a su destino');
 
         if (cost < bestCost) {// actualizar la ruta con menor costo
-          print('Mejor ruta guardada');
+          //print('Mejor ruta guardada');
           bestCost = cost;
           bestPath = path;
         }
@@ -130,7 +141,12 @@ List<LatLng> antColony(LatLng? startPosition, LatLng? endPosition, Graph graph) 
 
     updatePheromones(allPaths, costs);
   }
-
+  bestCost = (bestCost / 60);
+  print("MEJOR COSTO: $bestCost minutos");
   // convertir el mejor camino (lista de nodos) a lista de LatLng y retornarlo
   return bestPath.map((node) => node.position).toList();
+}
+
+List<String> extractLines(String line) {
+  return line.split(' - '); // Divide el nombre del nodo en sus componentes de línea
 }

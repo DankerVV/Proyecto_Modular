@@ -3,7 +3,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:proyecto_modular/presentation/views/rutas_views/estacion_cercana.dart';
 import 'package:proyecto_modular/presentation/views/rutas_views/estaciones_coordenadas.dart';
-import 'package:proyecto_modular/presentation/views/rutas_views/estaciones_markers.dart';
 import 'package:proyecto_modular/presentation/views/rutas_views/estaciones_polylines.dart';
 import 'package:proyecto_modular/presentation/views/rutas_views/genetic_algorithm.dart';
 import 'package:proyecto_modular/presentation/views/rutas_views/graph.dart';
@@ -54,6 +53,9 @@ class _RutasViewState extends State<RutasView> {
                   markerId: const MarkerId('currentLocation'),
                   icon: BitmapDescriptor.defaultMarker,
                   position: currentPosition!,
+                  infoWindow: const InfoWindow(
+                    title: 'Mi ubicación',
+                  ),
                 ),
                 ..._markers,
               },
@@ -84,7 +86,7 @@ class _RutasViewState extends State<RutasView> {
             child: const Text('Planear una ruta', style: TextStyle(fontSize: 18),),
           ),
         ),
-        if (_isCalculating) const Center(child: CircularProgressIndicator()), 
+        if (_isCalculating) const Center(child: CircularProgressIndicator()),
       ],
       
     ),
@@ -103,7 +105,6 @@ class _RutasViewState extends State<RutasView> {
     else{
       return;
     }
-
     permissionGranted = await locationController.hasPermission();
     if(permissionGranted == PermissionStatus.denied){
       permissionGranted = await locationController.requestPermission();
@@ -111,7 +112,6 @@ class _RutasViewState extends State<RutasView> {
     if(permissionGranted != PermissionStatus.granted){
       return;
     }
-
     locationController.onLocationChanged.listen((currentLocation){
       if(currentLocation.latitude != null && 
       currentLocation.longitude != null){
@@ -125,28 +125,28 @@ class _RutasViewState extends State<RutasView> {
     });
   }
 
-  // escuchar dónde toca la pantalla el usuario y obtener las coordenadas
+  // Escuchar dónde toca la pantalla el usuario y obtener las coordenadas
   void _handleTap(LatLng tappedPoint) {
     setState(() {
       finalPosition = tappedPoint;
       isPlanningRoute = false; // Desactivar bandera después de seleccionar el destino
     });
-    print('Destino seleccionado: $finalPosition');
+    //print('Destino seleccionado: $finalPosition');
     lastStation = estacionCercana(finalPosition!, estaciones);
-    print('Posición Actual: $currentPosition');
+    //print('Posición Actual: $currentPosition');
     LatLng? firstStation = estacionCercana(currentPosition!, estaciones);
     drawMarkers(firstStation, lastStation);
     findBestRoute(firstStation, lastStation, grafoTransporte);
   }
 
-// hilo aparte para calcular el mejor camino sin que se frene la aplicacion
+  // Hilo aparte para calcular el mejor camino sin que se frene la aplicacion
   Future<void> findBestRoute(LatLng? firstStation, LatLng? lastStation, Graph graph) async {
     if (lastStation != null) {
       setState(() {
         _isCalculating = true; // Muestra el indicador de progreso
       });
       List<LatLng> bestPath = await computeAntColony(firstStation, lastStation, grafoTransporte);// Ejecutar el cálculo en un hilo
-      print('MEJOR RUTA: $bestPath');
+      //print('MEJOR RUTA: $bestPath');
       drawPath(bestPath);
       setState(() {
         _isCalculating = false; // Ocultar el indicador de progreso
@@ -159,7 +159,7 @@ class _RutasViewState extends State<RutasView> {
     });
   }
 
-  // dibujar la mejor ruta encontrada por las hormigas
+  // Dibujar la mejor ruta encontrada por las hormigas con polylines
   void drawPath(List<LatLng> bestPath) {
     setState(() {
       _polylines.add(
@@ -172,14 +172,20 @@ class _RutasViewState extends State<RutasView> {
       );
     });
   }
-  // dibujar los markers de la primera y utlima estacion
+  // Dibujar los markers de la primera y utlima estacion
   void drawMarkers(LatLng? firstStation, LatLng? lastStation) {
     setState(() {
+      String firstStationName = findNodeName(firstStation, grafoTransporte);
+      String lastStationName = findNodeName(lastStation, grafoTransporte);
       _markers.add(
         Marker(
           markerId: const MarkerId('firstStation'),
           icon: BitmapDescriptor.defaultMarker,
           position: firstStation!,
+          infoWindow: InfoWindow(
+            title: firstStationName,
+            snippet: 'Esta es la primera estación',
+          ),
         ),
       );
       _markers.add(
@@ -187,8 +193,22 @@ class _RutasViewState extends State<RutasView> {
           markerId: const MarkerId('lastStation'),
           icon: BitmapDescriptor.defaultMarker,
           position: lastStation!,
+          infoWindow: InfoWindow(
+            title: lastStationName,
+            snippet: 'Esta es la última estación',
+          ),
         ),
       );
     });
   }
+
+  // Encontrar el nombre de la estacion segun sus coordenadas
+  String findNodeName(LatLng? targetPosition, Graph graph) {
+  for (Node node in graph.nodes) {
+    if (node.position == targetPosition) {
+      return node.name;
+    }
+  }
+  throw Exception('No se encontró un nodo con la posición dada');
+}
 }

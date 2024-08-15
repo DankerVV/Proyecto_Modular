@@ -12,7 +12,7 @@ LatLng? estacionCercana(LatLng currentPosition, List<LatLng> estaciones){
       estacionMasCercana = estacion;
     }
   }
-  print('Estación más cercana: $estacionMasCercana');
+  //print('Estación más cercana: $estacionMasCercana');
   return estacionMasCercana;
 }
 
