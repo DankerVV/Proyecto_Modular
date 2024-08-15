@@ -172,11 +172,11 @@ final List<Node> stations= [
 ];
 
 // Promedio de tiempo entre estaciones de cada linea, en segundos
-double tiempoL1 = 75;//189;// 63 min entre 20 estaciones
-double tiempoL2 = 60;//216;// 36 min entre 10 estaciones
-double tiempoL3 = 75;//250;// 75 min entre 18 estaciones
-double tiempoMc = 90;//102;// 46 min entre 27 estaciones
-double tiempoMp = 90;//128;// 90 min entre 42 estaciones
+double tiempoL1 = 75;// <- valores de Sofia, mas exactos //189s; <- 63 min entre 20 estaciones
+double tiempoL2 = 65;// <- valores de Sofia, mas exactos //216s; <- 36 min entre 10 estaciones
+double tiempoL3 = 60;// <- valores de Sofia, mas exactos //250s; <- 75 min entre 18 estaciones
+double tiempoMc = 90;// <- valores de Carlos, asi a ojo //102s; <- 46 min entre 27 estaciones
+double tiempoMp = 90;// <- valores de Carlos, asi a ojo //128s; <- 90 min entre 42 estaciones
 
 // Vamos a conectar los nodos entre sí
 final List<Edge> connections = [

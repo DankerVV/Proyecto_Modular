@@ -22,6 +22,7 @@ class _RutasViewState extends State<RutasView> {
   LatLng? lastStation;
   bool isPlanningRoute = false; // Bandera para controlar el modo de planificación de ruta
   bool _isCalculating = false;
+  double tiempoEstimado = 0;
   Set<Polyline> _polylines = {
     ...lineasLinea1,
     ...lineasLinea2,
@@ -44,24 +45,38 @@ class _RutasViewState extends State<RutasView> {
         currentPosition == null
           ? const Center(child: CircularProgressIndicator())
           : GoogleMap(
-              initialCameraPosition: const CameraPosition(
-                target: initialPosition,
-                zoom: 12,
-              ),
-              markers: {
-                Marker(
-                  markerId: const MarkerId('currentLocation'),
-                  icon: BitmapDescriptor.defaultMarker,
-                  position: currentPosition!,
-                  infoWindow: const InfoWindow(
-                    title: 'Mi ubicación',
-                  ),
-                ),
-                ..._markers,
-              },
-              polylines: _polylines,
-              onTap: isPlanningRoute ? _handleTap : null, // Manejar el evento onTap si se está planificando la ruta
+            initialCameraPosition: const CameraPosition(
+              target: initialPosition,
+              zoom: 12,
             ),
+            markers: {
+              Marker(
+                markerId: const MarkerId('currentLocation'),
+                icon: BitmapDescriptor.defaultMarker,
+                position: currentPosition!,
+                infoWindow: const InfoWindow(
+                  title: 'Mi ubicación',
+                ),
+              ),
+              ..._markers,
+            },
+            polylines: _polylines,
+            onTap: isPlanningRoute ? _handleTap : null, // Manejar el evento onTap si se está planificando la ruta
+          ),
+           SafeArea(
+            child: DecoratedBox(
+              decoration: const BoxDecoration(
+                color: Color.fromARGB(255, 26, 123, 30),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(4.0), // Agrega relleno alrededor del texto
+                child: Text(
+                  'Tiempo estimado: ${tiempoEstimado.toStringAsFixed(0)}  min',
+                  style: const TextStyle(fontSize: 20, color: Colors.white),
+                ),
+              ),
+            ),
+          ),
         Positioned(// Aqui comienza el boton
           bottom: 10,
           left: 100,
@@ -145,15 +160,16 @@ class _RutasViewState extends State<RutasView> {
       setState(() {
         _isCalculating = true; // Muestra el indicador de progreso
       });
-      List<LatLng> bestPath = await computeAntColony(firstStation, lastStation, grafoTransporte);// Ejecutar el cálculo en un hilo
+      BestPathResult antResult = await computeAntColony(firstStation, lastStation, grafoTransporte);// Ejecutar el cálculo en un hilo
       //print('MEJOR RUTA: $bestPath');
-      drawPath(bestPath);
+      drawPath(antResult.bestPath);
+      tiempoEstimado = antResult.bestCost + 5; // agregamos 5 minutos en lo que pasa el tren o camion
       setState(() {
         _isCalculating = false; // Ocultar el indicador de progreso
       });
     }
   }
-  Future<List<LatLng>> computeAntColony(LatLng? startStation, LatLng? endStation, Graph graph) async {
+  Future<BestPathResult> computeAntColony(LatLng? startStation, LatLng? endStation, Graph graph) async {
     return await Future.delayed(const Duration(milliseconds: 100), () {
       return antColony(startStation, endStation, graph);
     });

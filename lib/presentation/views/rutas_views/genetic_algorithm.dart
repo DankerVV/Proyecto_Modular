@@ -1,10 +1,17 @@
 import 'dart:math';
-
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:proyecto_modular/presentation/views/rutas_views/graph.dart';
 
+// clase para definir el objeto que vamos a retornar
+class BestPathResult {
+  final List<LatLng> bestPath; // lista con el mejor camino
+  final double bestCost; // costo
+
+  BestPathResult(this.bestPath, this.bestCost);
+}
+
 // Ant Colony Optimization ACO
-List<LatLng> antColony(LatLng? startPosition, LatLng? endPosition, Graph graph) {
+BestPathResult antColony(LatLng? startPosition, LatLng? endPosition, Graph graph) {
   
   // encontrar los nodos de inicio y fin
   Node startNode = graph.nodes.firstWhere((node) => node.position == startPosition);
@@ -22,7 +29,6 @@ List<LatLng> antColony(LatLng? startPosition, LatLng? endPosition, Graph graph) 
   List<List<double>> pheromoneLevels = List.generate(graph.nodes.length, (_) => List.filled(graph.nodes.length, 1.0));
 
 
-
   // Función para elegir el siguiente nodo al que la hormiga se moverá
   Node selectNextNode(Node currentNode, Set<Node> visited) {
     List<Edge> edges = graph.getEdgesFromNode(currentNode);// obtener las conexiones del nodo actual
@@ -31,10 +37,8 @@ List<LatLng> antColony(LatLng? startPosition, LatLng? endPosition, Graph graph) 
     if(unvisitedEdges.length == 1){// si solo hay un nodo no visitado, ir hacia ese nodo sin hacer cálculos
       return unvisitedEdges[0].end;
     }
-
     double totalProbability = 0.0;
     List<double> probabilities = [];
-
     for (Edge edge in edges) {
       if (!visited.contains(edge.end)) {// comprobar si el siguiente nodo ya fue visitado
         double pheromone = pheromoneLevels[graph.nodes.indexOf(edge.start)][graph.nodes.indexOf(edge.end)];
@@ -142,9 +146,10 @@ List<LatLng> antColony(LatLng? startPosition, LatLng? endPosition, Graph graph) 
     updatePheromones(allPaths, costs);
   }
   bestCost = (bestCost / 60);
-  print("MEJOR COSTO: $bestCost minutos");
+  //print("MEJOR COSTO: $bestCost minutos");
   // convertir el mejor camino (lista de nodos) a lista de LatLng y retornarlo
-  return bestPath.map((node) => node.position).toList();
+  //return bestPath.map((node) => node.position).toList();
+  return BestPathResult(bestPath.map((node) => node.position).toList(), bestCost);
 }
 
 List<String> extractLines(String line) {
