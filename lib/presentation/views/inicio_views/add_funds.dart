@@ -24,7 +24,7 @@ class AddFundsState extends State<AddFunds> {
   }
 
   Future<String> _createPaymentIntent(double amount) async {
-    final url = Uri.parse('http://127.0.0.1:5000/create-payment-intent');
+    final url = Uri.parse('http://10.0.2.2:5000/create-payment-intent');
     final response = await http.post(
       url,
       headers: {'Content-Type': 'application/json'},
@@ -42,20 +42,21 @@ class AddFundsState extends State<AddFunds> {
   Future<void> _processPayment(double amount) async {
     try {
       final clientSecret = await _createPaymentIntent(amount);
-
+      print("OAXACA,MEXICO");
       await Stripe.instance.initPaymentSheet(
         paymentSheetParameters: SetupPaymentSheetParameters(
           paymentIntentClientSecret: clientSecret,
           merchantDisplayName: 'Nombre',
         ),
       );
-
+      print("CUZCO,PERU");
       await Stripe.instance.presentPaymentSheet();
 
       _scaffoldMessengerKey.currentState?.showSnackBar(
         const SnackBar(content: Text('Pago realizado con éxito')),
       );
     } catch (e) {
+      print("LIMA,MIERDU: $e");
       _scaffoldMessengerKey.currentState?.showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
@@ -93,7 +94,9 @@ class AddFundsState extends State<AddFunds> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
+                    print("IREMEMBERTHEFALLEN,DOTHEYTHINKOFME?");
                     final amount = double.parse(_amountController.text);
+                    print("IMNOTSUREWHATIWANTBUTIDONTTHINKITSTHIS, $amount");
                     _processPayment(amount);
                   }
                 },
