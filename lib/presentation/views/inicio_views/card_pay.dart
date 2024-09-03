@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nfc_manager/nfc_manager.dart';
 
 class CardPay extends StatefulWidget {
   final String cardType;
@@ -14,6 +15,14 @@ class _CardPayState extends State<CardPay> {
     super.initState();
     startNFCFinder(widget.cardType, context);
   }
+
+   @override
+  void dispose() {
+    // Detén la sesión NFC cuando se sale de la pantalla actual
+    NfcManager.instance.stopSession();
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -33,19 +42,38 @@ class _CardPayState extends State<CardPay> {
   }
 }
 
-void startNFCFinder(String cardType, BuildContext context) async {
-  //TODO: buscar una terminal NFC, y proseguir unicamente cuando se encuentre.
-  if (cardType == 'basico'){
-    processPayment(9.50);
+void startNFCFinder(String cardType, BuildContext context) async{
+  try{
+    NfcManager.instance.startSession(
+      onDiscovered: (NfcTag tag) async {
+        print('Tag NFC detectado: $tag');
+        if (cardType == 'basico'){
+          processPayment(9.50);
+        }
+        else if(cardType == 'verde'){
+          pasajePayment();//siempre es un solo pago
+        }
+        else if(cardType == 'amarillo'){
+          processPayment(4.75);
+        }
+        else if(cardType == 'supervisor'){
+          //TODO: pagar nada, solo desbloquear
+        }
+
+        await NfcManager.instance.stopSession();
+      },
+      onError: (e){
+        // Maneja cualquier error que ocurra durante la sesión NFC
+        print('Error en la sesión NFC: $e');
+        NfcManager.instance.stopSession();
+        throw Exception('Error al manejar el NFC: $e');
+       },
+    );
   }
-  else if(cardType == 'verde'){
-    pasajePayment();//siempre es un solo pago
-  }
-  else if(cardType == 'amarillo'){
-    processPayment(4.75);
-  }
-  else if(cardType == 'supervisor'){
-    //TODO: pagar nada, solo desbloquear
+  catch(e){
+    print('Error general: $e');
+    // Detén la sesión NFC en caso de error
+    await NfcManager.instance.stopSession();
   }
 }
 

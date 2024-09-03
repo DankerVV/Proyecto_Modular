@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_nfc_kit/flutter_nfc_kit.dart';
-//import 'package:nfc_manager/nfc_manager.dart';
-
+import 'package:nfc_manager/nfc_manager.dart';
+import 'package:nfc_manager/platform_tags.dart';
 
 class ReloadPhysicalCard extends StatefulWidget {
   const ReloadPhysicalCard({super.key});
@@ -37,20 +36,37 @@ class _ReloadPhysicalCardState extends State<ReloadPhysicalCard> {
   }
 
   void startNFCReading() async {
-    try {
-      // Inicia la sesión NFC
-      NFCTag tag = await FlutterNfcKit.poll();
-      // Procesa la etiqueta NFC
-      setState(() {
-        _nfcMessage = 'Tarjeta NFC detectada: ${tag.type}';
+    bool isAvailable = await NfcManager.instance.isAvailable();
+
+    if (isAvailable) {
+      NfcManager.instance.startSession(onDiscovered: (NfcTag tag) async {
+        var mifareClassic = MifareClassic.from(tag);
+        if (mifareClassic != null) {
+          try {
+             // Intentar leer el bloque 4, que está en el sector 1
+            List<int> blockData = await mifareClassic.readBlock(blockIndex: 4);
+            String data = String.fromCharCodes(blockData); 
+            setState(() {
+              _nfcMessage = 'Valor leído: $data';
+            });
+          } catch (e) {
+            setState(() {
+              _nfcMessage = 'Error al leer la tarjeta: $e';
+            });
+          }
+        }
+        else {
+          setState(() {
+            _nfcMessage = 'No se pudo reconocer la tarjeta Mifare Classic.';
+          });
+        }
+        
+        await NfcManager.instance.stopSession();
       });
-    } catch (e) {
+    } else {
       setState(() {
-        _nfcMessage = 'Error al leer NFC: $e';
+        _nfcMessage = 'NFC no está disponible en este dispositivo.';
       });
-    } finally {
-      // Detén la sesión NFC después de la lectura
-      //await FlutterNfcKit.finish();
     }
   }
 }
