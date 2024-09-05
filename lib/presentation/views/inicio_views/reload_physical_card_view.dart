@@ -57,7 +57,7 @@ class _ReloadPhysicalCardState extends State<ReloadPhysicalCard> {
             String numericData = data.replaceAll(RegExp(r'[^0-9.]'), '');
 
             setState(() {
-              _nfcMessage = 'Valor leído: $numericData';
+              _nfcMessage = 'Saldo actual: $numericData';
             });
           } catch (e) {
             setState(() {
