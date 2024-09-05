@@ -26,7 +26,9 @@ class MainActivity: FlutterFragmentActivity() {
     override fun onResume() {
         super.onResume()
         val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-        val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+        val pendingIntent = PendingIntent.getActivity(this, 0, intent, 
+        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE 
+        )
         nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null)
     }
 
@@ -35,7 +37,7 @@ class MainActivity: FlutterFragmentActivity() {
         nfcAdapter.disableForegroundDispatch(this)
     }
 
-    override fun onNewIntent(intent: Intent?) {
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         val tag: Tag? = intent?.getParcelableExtra(NfcAdapter.EXTRA_TAG)
         if (tag != null) {
