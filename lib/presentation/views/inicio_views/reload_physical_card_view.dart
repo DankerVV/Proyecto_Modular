@@ -67,7 +67,9 @@ class _ReloadPhysicalCardState extends State<ReloadPhysicalCard> {
                     if(_saldo != -1111.11){// verificacion para saber si se leyó la carta
                       final amount = double.parse(_amountController.text);
                       double saldoFinal = amount + _saldo;
-                      pagar(saldoFinal, amount);
+                      procesarPago(amount, _scaffoldMessengerKey);
+                      startNFCWriting(saldoFinal);
+                      //pagar(saldoFinal, amount);
                     }
                   }
                 },
@@ -80,12 +82,12 @@ class _ReloadPhysicalCardState extends State<ReloadPhysicalCard> {
     );
   }
 
-  Future<void> pagar(double saldoFinal, double amount) async {
-  bool pago = await procesarPago(amount, _scaffoldMessengerKey);
-  if (pago) {
-    startNFCWriting(saldoFinal);
-  }
-}
+//   Future<void> pagar(double saldoFinal, double amount) async {
+//   bool pago = await procesarPago(amount, _scaffoldMessengerKey);
+//   if (pago) {
+//     startNFCWriting(saldoFinal);
+//   }
+// }
   
   void startNFCReading() async {
     bool isAvailable = await NfcManager.instance.isAvailable();
