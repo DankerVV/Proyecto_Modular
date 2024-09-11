@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">proyecto_modular</string>
+    <string name="servicio_hce">com.example.proyecto_modular.YourHCEService</string>
+    <string name="emulacion_tarjeta">YourCardEmulation</string>
 </resources>
