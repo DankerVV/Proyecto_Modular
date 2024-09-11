@@ -108,7 +108,7 @@ class _ReloadPhysicalCardState extends State<ReloadPhysicalCard> {
             String data = String.fromCharCodes(blockData);
             String numericData = data.replaceAll(RegExp(r'[^0-9.]'), '');
             _saldo = double.parse(numericData);
-            changeMessage('Saldo actual: $numericData');
+            changeMessage('Saldo actual: \$ $numericData MXN');
           } catch (e) {
             changeMessage('Error al leer la tarjeta: $e');
           }
@@ -147,7 +147,7 @@ class _ReloadPhysicalCardState extends State<ReloadPhysicalCard> {
             // Intentar escribir en el bloque 4, que está en el sector 1
             Uint8List dataToWrite = Uint8List.fromList(valueBytes);
             await mifareClassic.writeBlock(blockIndex: 4, data: dataToWrite);
-            changeMessage('Saldo actualizado: $saldoFinal');
+            changeMessage('Saldo actualizado: \$ $saldoFinal MXN');
             
           } catch (e) {
             changeMessage('Error al escribir en la tarjeta: $e');

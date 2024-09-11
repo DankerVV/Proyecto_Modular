@@ -65,6 +65,7 @@ class _CardPayState extends State<CardPay> {
               String numericData = data.replaceAll(RegExp(r'[^0-9.]'), '');
               double content = double.parse(numericData);
               if(content == 1.234){// Este es el valor de la tarjeta que será la terminal
+                changeMessage('Terminal detectada');
                 if (cardType == 'basico'){
                   processPayment(9.50);
                 }
