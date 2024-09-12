@@ -21,7 +21,7 @@ class AddCard extends StatelessWidget {
               bool isPasswordCorrect = await verifyPassword(context);
               if (isPasswordCorrect) {
                 navigatorKey.currentState?.push(
-                  MaterialPageRoute(builder: (context) => const NewCard(cardType: 'verde')),
+                  MaterialPageRoute(builder: (context) => NewCard(cardType: 'verde')),
                 );
               }
             },
@@ -32,7 +32,7 @@ class AddCard extends StatelessWidget {
               bool isPasswordCorrect = await verifyPassword(context);
               if (isPasswordCorrect) {
                 navigatorKey.currentState?.push(
-                  MaterialPageRoute(builder: (context) => const NewCard(cardType: 'amarillo')),
+                  MaterialPageRoute(builder: (context) => NewCard(cardType: 'amarillo')),
                 );
               }
             },
@@ -43,7 +43,7 @@ class AddCard extends StatelessWidget {
               bool isPasswordCorrect = await verifyPassword(context);
               if (isPasswordCorrect) {
                 navigatorKey.currentState?.push(
-                  MaterialPageRoute(builder: (context) => const NewCard(cardType: 'supervisor')),
+                  MaterialPageRoute(builder: (context) => NewCard(cardType: 'supervisor')),
                 );
               }
             },
