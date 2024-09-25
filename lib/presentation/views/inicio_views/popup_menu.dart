@@ -18,12 +18,6 @@ PopupMenuButton<String> buildPopupMenuButton(BuildContext context) {
             MaterialPageRoute(builder: (context) => const ViewBalance()),
           );
           break;  
-        case 'Editar':
-          //print('Opción 3 seleccionada');
-          break;
-        case 'Eliminar':
-          //print('Opción 4 seleccionada');
-          break;
       }
     },
     itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
@@ -34,14 +28,6 @@ PopupMenuButton<String> buildPopupMenuButton(BuildContext context) {
       const PopupMenuItem<String>(
         value: 'Ver Saldo',
         child: Text('Ver Saldo'),
-      ),
-      const PopupMenuItem<String>(
-        value: 'Editar',
-        child: Text('Editar'),
-      ),
-      const PopupMenuItem<String>(
-        value: 'Eliminar',
-        child: Text('Eliminar'),
       ),
     ],
   );

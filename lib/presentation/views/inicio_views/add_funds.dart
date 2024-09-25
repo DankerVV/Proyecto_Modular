@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:proyecto_modular/config/pagos/procesar_pags.dart';
 
@@ -51,6 +53,7 @@ class AddFundsState extends State<AddFunds> {
                   if (_formKey.currentState!.validate()) {
                     final amount = double.parse(_amountController.text);
                     procesarPago(amount, _scaffoldMessengerKey); // Llamar a la función de pago
+                    agregarSaldo(amount);
                   }
                 },
                 child: const Text('Añadir Fondos'),
@@ -60,5 +63,37 @@ class AddFundsState extends State<AddFunds> {
         ),
       ),
     );
+  }
+}
+
+Future<void> agregarSaldo(double monto) async {
+  try {
+    // Obtener referencia al usuario en la base de datos
+    final String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    final DocumentReference userRef = FirebaseFirestore.instance
+        .collection('Users')
+        .doc(uid); // Usar el ID del usuario
+
+    // Obtener los datos del usuario desde Firestore
+    DocumentSnapshot userSnapshot = await userRef.get();
+
+    if (userSnapshot.exists) {
+      Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
+
+      // Obtener el saldo actual del usuario
+      double saldoActual = userData['saldo'] ?? 0.0;
+
+      // Sumar el monto al saldo actual
+      saldoActual += monto;
+
+      // Actualizar el campo "saldo" en la base de datos
+      await userRef.update({'saldo': saldoActual});
+
+      print('El saldo ha sido actualizado a $saldoActual.');
+    } else {
+      print('El usuario no existe.');
+    }
+  } catch (e) {
+    print('Error al agregar fondos: $e');
   }
 }

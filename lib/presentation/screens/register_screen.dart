@@ -1,5 +1,4 @@
 import 'dart:io' as io;
-import 'dart:html' as html;
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart'; 
 import 'package:image_picker/image_picker.dart';
@@ -87,6 +86,7 @@ class RegisterScreen extends HookConsumerWidget {
             'email': emailController.text,
             'profileImageUrl': imageUrl ?? '', 
             'tipo': 'Pasajero', 
+            'saldo': 0.0,
             'createdAt': FieldValue.serverTimestamp(),
           });
 

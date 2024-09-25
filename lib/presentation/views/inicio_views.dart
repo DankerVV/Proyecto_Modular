@@ -83,7 +83,8 @@ class InicioView extends StatelessWidget {
       onTap: () {
         Navigator.of(context).push(
           MaterialPageRoute(
-            builder: (context) => PreferentialCard(cardType: cardData['tipo']),
+            builder: (context) => CardPay(cardType: cardData['tipo']),
+            //PreferentialCard(cardType: cardData['tipo']),
           ),
         );
       },

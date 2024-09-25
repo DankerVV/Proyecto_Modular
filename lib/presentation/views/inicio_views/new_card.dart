@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class NewCard extends StatelessWidget {
   final String cardType;
 
-  NewCard({super.key, required this.cardType});
+  const NewCard({super.key, required this.cardType});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ class NewCard extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Text('Se agregó una tarjeta preferencial del tipo: $tipo', textAlign: TextAlign.left, style: TextStyle(fontSize: 18)),
+            Text('Se agregó una tarjeta preferencial del tipo: $tipo', textAlign: TextAlign.left, style: const TextStyle(fontSize: 18)),
             const Text('Favor de ir a la sección de ver tarjetas en el perfil para activarla', textAlign: TextAlign.left, style: TextStyle(fontSize: 16)),
           ],
         ),

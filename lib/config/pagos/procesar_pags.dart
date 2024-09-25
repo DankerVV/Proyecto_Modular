@@ -33,7 +33,7 @@ Future<bool> procesarPago(double amount, GlobalKey<ScaffoldMessengerState> scaff
 
 // Función para crear el PaymentIntent
 Future<String> _createPaymentIntent(double amount) async {
-  final url = Uri.parse('http://192.168.1.89:5001/create-payment-intent');
+  final url = Uri.parse('http://192.168.1.75:5001/create-payment-intent'); // Usar para android físico
   // NOTA: usar 'http://10.0.2.2:5000/create-payment-intent' para emulador android, la dirección cambia según en dónde se corra el programa
   final response = await http.post(
     url,

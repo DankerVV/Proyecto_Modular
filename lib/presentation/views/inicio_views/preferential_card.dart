@@ -11,11 +11,11 @@ class PreferentialCard extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Tarjeta Preferencial'), 
       ),
-      body: Center(
+      body: const Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            const Text('Aquí va la tarjeta preferencial'),
+            Text('Aquí va la tarjeta preferencial'),
           ],
         ),
       ),
