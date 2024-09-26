@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:proyecto_modular/presentation/views/inicio_views/add_funds.dart';
 import 'package:universal_io/io.dart' as uio;
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -18,11 +19,25 @@ class PerfilView extends StatefulWidget {
 
 class _PerfilViewState extends State<PerfilView> {
   String? _imageUrl;
+  double saldo = 0.0;
 
   @override
   void initState() {
     super.initState();
     _loadProfileImage();
+    _getSaldo();
+  }
+  Future<void> _getSaldo() async {
+    final String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    final DocumentReference userRef = FirebaseFirestore.instance.collection('Users').doc(uid);
+    
+    DocumentSnapshot userSnapshot = await userRef.get();
+    if (userSnapshot.exists) {
+      Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
+      setState(() {
+        saldo = userData['saldo'] ?? 0.0;
+      });
+    }
   }
 
   @override
@@ -136,6 +151,8 @@ class _PerfilViewState extends State<PerfilView> {
               const SizedBox(height: 40),
               Cardinfo(context),
               const SizedBox(height: 40),
+              fundsButton(context, saldo),
+              const SizedBox(height: 40),
               Settingsbutton(context),
               const SizedBox(height: 40),
               Logoutbutton(context),
@@ -218,7 +235,7 @@ Widget Cardinfo(BuildContext context) {
       children: [
         SizedBox(width: 15),
         Text('Ver tarjetas', textAlign: TextAlign.left, style: TextStyle(fontSize: 22)),
-        SizedBox(width: 130),
+        SizedBox(width: 140),
         Icon(Icons.credit_card, size: 30),
       ],
     ),
@@ -238,8 +255,8 @@ Widget Settingsbutton(BuildContext context) {
     child: const Row(
       children: [
         SizedBox(width: 15),
-        Text('Configurar Perfil', textAlign: TextAlign.left, style: TextStyle(fontSize: 22)),
-        SizedBox(width: 130),
+        Text('Configurar perfil', textAlign: TextAlign.left, style: TextStyle(fontSize: 22)),
+        SizedBox(width: 95),
         Icon(Icons.settings, size: 30),
       ],
     ),
@@ -260,6 +277,28 @@ Widget Logoutbutton(BuildContext context) {
         Text('Cerrar sesión', textAlign: TextAlign.left, style: TextStyle(fontSize: 22)),
         SizedBox(width: 130),
         Icon(Icons.logout, size: 30),
+      ],
+    ),
+  );
+}
+
+Widget fundsButton(BuildContext context, double saldo) {
+  return ElevatedButton(
+    onPressed: () {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const AddFunds()),
+      );
+    },
+    style: ElevatedButton.styleFrom(
+      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+    ),
+    child:  Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const SizedBox(width: 15),
+        const Text('Agregar saldo', textAlign: TextAlign.left, style: TextStyle(fontSize: 22)),
+        const SizedBox(width: 120),
+        Expanded(child: Text('\$${saldo.toStringAsFixed(2)}', textAlign: TextAlign.left, style: const TextStyle(fontSize: 15, fontStyle: FontStyle.italic))),
       ],
     ),
   );

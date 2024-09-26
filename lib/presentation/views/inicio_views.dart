@@ -5,7 +5,6 @@ import 'package:proyecto_modular/presentation/views/inicio_views/add_card.dart';
 import 'package:proyecto_modular/presentation/views/inicio_views/card_pay.dart';
 import 'package:proyecto_modular/presentation/views/inicio_views/popup_menu.dart';
 import 'package:proyecto_modular/presentation/views/inicio_views/reload_physical_card_view.dart';
-import 'package:proyecto_modular/presentation/views/inicio_views/preferential_card.dart'; 
 
 class InicioView extends StatelessWidget {
   const InicioView({super.key});
@@ -142,7 +141,7 @@ Widget addButton(BuildContext context) {
     child: const Row(
       children: [
         SizedBox(width: 15),
-        Text('Agregar Tarjeta', textAlign: TextAlign.left, style: TextStyle(fontSize: 22)),
+        Text('Agregar tarjeta', textAlign: TextAlign.left, style: TextStyle(fontSize: 22)),
         SizedBox(width: 130),
         Icon(Icons.add, size: 30),
       ],
@@ -163,7 +162,7 @@ Widget physicalCard(BuildContext context) {
     child: const Row(
       children: [
         SizedBox(width: 15),
-        Text('Recargar Tarjeta Física', textAlign: TextAlign.left, style: TextStyle(fontSize: 22)),
+        Text('Recargar tarjeta física', textAlign: TextAlign.left, style: TextStyle(fontSize: 22)),
         SizedBox(width: 50),
         Icon(Icons.credit_card, size: 30),
       ],

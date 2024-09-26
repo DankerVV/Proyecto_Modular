@@ -129,44 +129,45 @@ Future<String> processPayment(double monto, String cardType) async {
 }
 
 Future<String> pasajePayment(String cardType) async {
-  try {
-    // Obtener referencia a la tarjeta en la base de datos
-    final String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
-    final DocumentReference cardRef = FirebaseFirestore.instance
-        .collection('Cards')
-        .doc(uid); // Usar el ID de la tarjeta
+    try {
+      // Obtener el UID del usuario actual
+      final String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
 
-    // Obtener los datos de la tarjeta desde Firestore
-    DocumentSnapshot cardSnapshot = await cardRef.get();
+      // Realizar la consulta para buscar la tarjeta activa con el UID del usuario
+      QuerySnapshot querySnapshot = await FirebaseFirestore.instance
+          .collection('Cards')
+          .where('uid', isEqualTo: uid) // Filtrar por UID
+          .where('activo', isEqualTo: true) // Filtrar por tarjetas activas
+          .get();
 
-    if (cardSnapshot.exists) {
-      Map<String, dynamic> cardData = cardSnapshot.data() as Map<String, dynamic>;
+      if (querySnapshot.docs.isNotEmpty) {
+        // Procesar la tarjeta activa
+        for (var doc in querySnapshot.docs) {
+          Map<String, dynamic> cardData = doc.data() as Map<String, dynamic>;
 
-      // Obtener el tipo de tarjeta y el número actual de pasajes
-      String tipo = cardData['tipo'];
-      int pasajesActuales = cardData['pasajes'] ?? 0;
+          // Obtener el tipo de tarjeta, el número actual de pasajes y el estado activo
+          String tipo = cardData['tipo'];
+          int pasajesActuales = cardData['pasajes'] ?? 0;
 
-      // Solo restar pasajes si es "verde"
-      if (tipo == 'verde') {
-        int nuevosPasajes = pasajesActuales - 1;
-
-        // Asegurarse de no tener un valor negativo
-        if (nuevosPasajes < 0) {
-          nuevosPasajes = 0;
+          // Solo restar pasajes si es "verde" y no es "supervisor"
+          if (tipo == 'verde') {
+            int nuevosPasajes = pasajesActuales - 1;
+            // Asegurarse de no tener un valor negativo
+            if (nuevosPasajes < 0) {
+              nuevosPasajes = 0;
+            }
+            // Actualizar el campo "pasajes" en la base de datos
+            await doc.reference.update({'pasajes': nuevosPasajes});
+            return('Pasajes actualizados: $nuevosPasajes.');
+          } else if (tipo == 'supervisor') {
+            return('Supervisor');
+          }
         }
-
-        // Actualizar el campo "pasajes" en la base de datos
-        await cardRef.update({'pasajes': nuevosPasajes});
-
-        return('Saldo actualizado: \$$nuevosPasajes.');
-      } else if (tipo == 'supervisor') {
-        return('Supervisor');
+      } else {
+        return('No existen tarjetas activas.');
       }
-    } else {
-      return('La tarjeta no existe.');
+    } catch (e) {
+      return('Error al procesar el pago: $e');
     }
-  } catch (e) {
-    return('Error al procesar el pago de pasajes: $e');
+    return 'Error desconocido';
   }
-  return '';
-}
