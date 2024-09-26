@@ -95,7 +95,8 @@ class InicioView extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Tarjeta: ${cardData['tipo']}', textAlign: TextAlign.left, style: const TextStyle(fontSize: 22)),
+            Text('Tarjeta: ${cardData['tipo']}', textAlign: TextAlign.left, style: const TextStyle(fontSize: 22)),
+            if (cardData['tipo'] == 'verde') 
               Text('Pasajes: ${cardData['pasajes']}', textAlign: TextAlign.left, style: const TextStyle(fontSize: 22)),
             ],
           ),
