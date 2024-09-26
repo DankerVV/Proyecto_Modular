@@ -55,32 +55,44 @@ class CardsList extends StatelessWidget {
             final cardId = doc.id;
 
             return Card(
-              margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
-              child: ListTile(
-                contentPadding: const EdgeInsets.all(15),
-                title: Text('Tipo: ${data['tipo']}', style: const TextStyle(fontSize: 18)),
-                subtitle: Text('Pasajes: ${data['pasajes']}', style: const TextStyle(fontSize: 16)),
-                trailing: PopupMenuButton<String>(
-                  onSelected: (String value) {
-                    if (value == 'activar') {
-                      activateCard(context, uid, cardId);
-                    } else if (value == 'borrar') {
-                      deleteCard(context, cardId);
-                    }
-                  },
-                  itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                    const PopupMenuItem<String>(
-                      value: 'activar',
-                      child: Text('Activar'),
-                    ),
+            margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 15),
+            child: ListTile(
+              contentPadding: const EdgeInsets.all(15),
+              title: Text('Tipo: ${data['tipo']}', style: const TextStyle(fontSize: 18)),
+              subtitle: data['tipo'] == 'verde'
+                  ? Text('Pasajes: ${data['pasajes']}', style: const TextStyle(fontSize: 16))
+                  : null,
+              trailing: PopupMenuButton<String>(
+                onSelected: (String value) {
+                  if (value == 'activar') {
+                    activateCard(context, uid, cardId);
+                  } else if (value == 'desactivar') {
+                    deactivateCard(context, cardId);
+                  } else if (value == 'borrar') {
+                    deleteCard(context, cardId);
+                  }
+                },
+                itemBuilder: (BuildContext context) {
+                  return <PopupMenuEntry<String>>[
+                    if (!data['activo'])
+                      const PopupMenuItem<String>(
+                        value: 'activar',
+                        child: Text('Activar'),
+                      ),
+                    if (data['activo'])
+                      const PopupMenuItem<String>(
+                        value: 'desactivar',
+                        child: Text('Desactivar'),
+                      ),
                     const PopupMenuItem<String>(
                       value: 'borrar',
                       child: Text('Borrar'),
                     ),
-                  ],
-                ),
+                  ];
+                },
               ),
-            );
+            ),
+          );
           }).toList(),
         );
       },
@@ -110,13 +122,22 @@ class CardsList extends StatelessWidget {
     );
 
     ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Se actualizó la tarjeta activa')),
+            const SnackBar(content: Text('Tarjeta activada')),
           );
     
     await batch.commit();
   }
 
+  void deactivateCard(BuildContext context, String cardId) async {
+    //Desactivar la tarjeta activa actual 
+    await FirebaseFirestore.instance.collection('Cards').doc(cardId).update({'activo': false});
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Tarjeta desactivada')),
+    );
+  }
+
   Future<void> deleteCard(BuildContext context, String cardId) async {
+    //Borrar la tarjeta seleccionada 
     bool isPasswordCorrect = await verifyPassword(context);
     if (isPasswordCorrect) {
       FirebaseFirestore.instance.collection('Cards').doc(cardId).delete();
