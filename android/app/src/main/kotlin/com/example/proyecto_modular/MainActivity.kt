@@ -9,7 +9,7 @@ import android.widget.Toast
 import io.flutter.embedding.android.FlutterFragmentActivity
 
 class MainActivity: FlutterFragmentActivity() {
-    private lateinit var nfcAdapter: NfcAdapter
+    private var nfcAdapter: NfcAdapter? = null // Cambiar a var y permitir null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,32 +18,32 @@ class MainActivity: FlutterFragmentActivity() {
         nfcAdapter = NfcAdapter.getDefaultAdapter(this)
         if (nfcAdapter == null) {
             Toast.makeText(this, "NFC no está disponible en este dispositivo.", Toast.LENGTH_LONG).show()
-            finish()
-            return
+            // No cerramos la app, simplemente continuamos sin NFC
         }
     }
 
     override fun onResume() {
         super.onResume()
-        val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-        val pendingIntent = PendingIntent.getActivity(this, 0, intent, 
-        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE 
-        )
-        nfcAdapter.enableForegroundDispatch(this, pendingIntent, null, null)
+        // Solo habilitar NFC si está disponible
+        if (nfcAdapter != null) {
+            val intent = Intent(this, javaClass).addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+            val pendingIntent = PendingIntent.getActivity(this, 0, intent, 
+            PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+            nfcAdapter?.enableForegroundDispatch(this, pendingIntent, null, null)
+        }
     }
 
     override fun onPause() {
         super.onPause()
-        nfcAdapter.disableForegroundDispatch(this)
+        // Solo deshabilitar NFC si está disponible
+        nfcAdapter?.disableForegroundDispatch(this)
     }
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         val tag: Tag? = intent?.getParcelableExtra(NfcAdapter.EXTRA_TAG)
         if (tag != null) {
-            // Aquí puedes manejar el tag detectado
             Toast.makeText(this, "Tag NFC detectado!", Toast.LENGTH_SHORT).show()
-            // Puedes enviar la información del tag a Flutter si es necesario
         }
     }
 }

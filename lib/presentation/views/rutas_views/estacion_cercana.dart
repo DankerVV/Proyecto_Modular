@@ -16,9 +16,9 @@ LatLng? estacionCercana(LatLng currentPosition, List<LatLng> estaciones){
   return estacionMasCercana;
 }
 
-//Fórmula de Haversine para calcular distancia
+//Fórmula de Haversine
 double calcularDistancia(LatLng punto1, LatLng punto2) {
-  const double radioTierra = 6371.0; // Radio de la Tierra en kilómetros
+  const double radioTierra = 6371.0; // Radio de la Tierra en km
   double deltaLat = _gradosARadianes(punto2.latitude - punto1.latitude);
   double deltaLng = _gradosARadianes(punto2.longitude - punto1.longitude);
   double a = sin(deltaLat / 2) * sin(deltaLat / 2) +
