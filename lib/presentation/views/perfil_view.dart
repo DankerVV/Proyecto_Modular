@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:proyecto_modular/presentation/views/inicio_views/add_funds.dart';
 import 'package:universal_io/io.dart' as uio;
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,45 +18,23 @@ class PerfilView extends StatefulWidget {
 
 class _PerfilViewState extends State<PerfilView> {
   String? _imageUrl;
-  double saldo = 0.0;
 
   @override
   void initState() {
     super.initState();
     _loadProfileImage();
-    _getSaldo();
-  }
-  Future<void> _getSaldo() async {
-    final String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
-    final DocumentReference userRef = FirebaseFirestore.instance.collection('Users').doc(uid);
-    
-    DocumentSnapshot userSnapshot = await userRef.get();
-    if (userSnapshot.exists) {
-      Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
-      setState(() {
-        saldo = userData['saldo'] ?? 0.0;
-      });
-    }
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
   }
 
   Future<void> _loadProfileImage() async {
     final user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      //Obtener el usuario actual de la base de datos 
       final docSnapshot = await FirebaseFirestore.instance.collection('Users').doc(user.uid).get();
       if (docSnapshot.exists) {
         final data = docSnapshot.data() as Map<String, dynamic>?;
-        if (data != null) {
-          if (mounted) {
-            setState(() {
-              _imageUrl = data['profileImageUrl'];
-            });
-          }
+        if (data != null && mounted) {
+          setState(() {
+            _imageUrl = data['profileImageUrl'];
+          });
         }
       }
     }
@@ -74,31 +51,21 @@ class _PerfilViewState extends State<PerfilView> {
       });
 
       if (mounted) {
-        setState(() {
-          _imageUrl = imageUrl;
-          print('Nueva URL de la imagen: $_imageUrl');
-        });
+        setState(() => _imageUrl = imageUrl);
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Imagen guardada exitosamente.')),
-      );
+      _showSnackBar('Imagen guardada exitosamente.');
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error al guardar la imagen: ${e.toString()}')),
-        );
-      }
+      _showSnackBar('Error al guardar la imagen: ${e.toString()}');
     }
   }
 
-  Future<void> _selectAndUploadImage(BuildContext context, User user) async {
+  Future<void> _selectAndUploadImage(User user) async {
     final picker = ImagePicker();
     XFile? pickedFile;
 
-    if (uio.Platform.isAndroid || uio.Platform.isIOS) {
-      pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    } else if (uio.Platform.isWindows || uio.Platform.isLinux || uio.Platform.isMacOS) {
+    if (uio.Platform.isAndroid || uio.Platform.isIOS || 
+        uio.Platform.isWindows || uio.Platform.isLinux || uio.Platform.isMacOS) {
       pickedFile = await picker.pickImage(source: ImageSource.gallery);
     }
 
@@ -106,6 +73,19 @@ class _PerfilViewState extends State<PerfilView> {
       final imageFile = File(pickedFile.path);
       await _uploadImage(imageFile, user);
     }
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  void _navigateTo(Widget screen) {
+    Navigator.of(context).push(MaterialPageRoute(builder: (_) => screen));
+  }
+
+  void _logout() async {
+    await FirebaseAuth.instance.signOut();
+    _navigateTo(const LoginScreen());
   }
 
   @override
@@ -119,14 +99,12 @@ class _PerfilViewState extends State<PerfilView> {
     return SafeArea(
       child: StreamBuilder<DocumentSnapshot>(
         stream: FirebaseFirestore.instance.collection('Users').doc(user.uid).snapshots(),
-        builder: (BuildContext context, AsyncSnapshot<DocumentSnapshot> snapshot) {
+        builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return Center(
-              child: Text('Error al cargar los datos: ${snapshot.error}'),
-            );
+            return Center(child: Text('Error al cargar los datos: ${snapshot.error}'));
           }
           if (!snapshot.hasData || !snapshot.data!.exists) {
             return const Center(child: Text('No se encontraron datos'));
@@ -141,25 +119,99 @@ class _PerfilViewState extends State<PerfilView> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               GestureDetector(
-                onTap: () => _selectAndUploadImage(context, user),
+                onTap: () => _selectAndUploadImage(user),
                 child: ProfileCard(
-                  imagePath: _imageUrl, 
+                  imagePath: _imageUrl,
                   name: name,
-                  description: tipo, 
+                  description: tipo,
                 ),
               ),
               const SizedBox(height: 40),
-              Cardinfo(context),
+              _buildCardInfoButton(),
               const SizedBox(height: 40),
-              fundsButton(context, saldo),
+              _buildSettingsButton(),
               const SizedBox(height: 40),
-              Settingsbutton(context),
-              const SizedBox(height: 40),
-              Logoutbutton(context),
+              _buildLogoutButton(),
             ],
           );
         },
       ),
+    );
+  }
+
+  Widget _buildCardInfoButton() {
+    return ElevatedButton(
+      onPressed: () => _navigateTo(const Cardview()),
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+      ),
+      child: const Row(
+        children: [
+          SizedBox(width: 15),
+          Text('Ver tarjetas', style: TextStyle(fontSize: 22)),
+          Spacer(),
+          Icon(Icons.credit_card, size: 30),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSettingsButton() {
+    return ElevatedButton(
+      onPressed: () => _navigateTo(const ProfileSettings()),
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+      ),
+      child: const Row(
+        children: [
+          SizedBox(width: 15),
+          Text('Configurar Perfil', style: TextStyle(fontSize: 22)),
+          Spacer(),
+          Icon(Icons.settings, size: 30),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLogoutButton() {
+    return ElevatedButton(
+      onPressed: _showLogoutDialog,
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+      ),
+      child: const Row(
+        children: [
+          SizedBox(width: 15),
+          Text('Cerrar sesión', style: TextStyle(fontSize: 22)),
+          Spacer(),
+          Icon(Icons.logout, size: 30),
+        ],
+      ),
+    );
+  }
+
+  void _showLogoutDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Cerrar sesión'),
+          content: const Text('Estás saliendo de la cuenta.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop();
+                _logout();
+              },
+              child: const Text('Aceptar'),
+            ),
+          ],
+        );
+      },
     );
   }
 }
@@ -187,149 +239,23 @@ class ProfileCard extends StatelessWidget {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
+          children: [
             CircleAvatar(
               radius: 60,
               backgroundImage: imagePath != null && imagePath!.isNotEmpty
-                  ? NetworkImage(imagePath!) //Foto de perfil 
-                  : null, // La imagen predeterminada se quitó
+                  ? NetworkImage(imagePath!)
+                  : null,
               child: imagePath == null || imagePath!.isEmpty
-                  ? const Icon(Icons.person, size: 60) 
+                  ? const Icon(Icons.person, size: 60)
                   : null,
             ),
             const SizedBox(height: 10),
-            Text(
-              name,
-              style: const TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
+            Text(name, style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
             const SizedBox(height: 5),
-            Text(
-              description,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.grey,
-              ),
-              textAlign: TextAlign.center,
-            ),
+            Text(description, style: const TextStyle(fontSize: 16, color: Colors.grey)),
           ],
         ),
       ),
     );
   }
-}
-
-Widget Cardinfo(BuildContext context) {
-  return ElevatedButton(
-    onPressed: () {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const Cardview()),
-      );
-    },
-    style: ElevatedButton.styleFrom(
-      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
-    ),
-    child: const Row(
-      children: [
-        SizedBox(width: 15),
-        Text('Ver tarjetas', textAlign: TextAlign.left, style: TextStyle(fontSize: 22)),
-        SizedBox(width: 140),
-        Icon(Icons.credit_card, size: 30),
-      ],
-    ),
-  );
-}
-
-Widget Settingsbutton(BuildContext context) {
-  return ElevatedButton(
-    onPressed: () {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const ProfileSettings()),
-      );
-    },
-    style: ElevatedButton.styleFrom(
-      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
-    ),
-    child: const Row(
-      children: [
-        SizedBox(width: 15),
-        Text('Configurar perfil', textAlign: TextAlign.left, style: TextStyle(fontSize: 22)),
-        SizedBox(width: 95),
-        Icon(Icons.settings, size: 30),
-      ],
-    ),
-  );
-}
-
-Widget Logoutbutton(BuildContext context) {
-  return ElevatedButton(
-    onPressed: () {
-      _showAlertDialog(context);
-    },
-    style: ElevatedButton.styleFrom(
-      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
-    ),
-    child: const Row(
-      children: [
-        SizedBox(width: 15),
-        Text('Cerrar sesión', textAlign: TextAlign.left, style: TextStyle(fontSize: 22)),
-        SizedBox(width: 130),
-        Icon(Icons.logout, size: 30),
-      ],
-    ),
-  );
-}
-
-Widget fundsButton(BuildContext context, double saldo) {
-  return ElevatedButton(
-    onPressed: () {
-      Navigator.of(context).push(
-        MaterialPageRoute(builder: (context) => const AddFunds()),
-      );
-    },
-    style: ElevatedButton.styleFrom(
-      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
-    ),
-    child:  Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        const SizedBox(width: 15),
-        const Text('Agregar saldo', textAlign: TextAlign.left, style: TextStyle(fontSize: 22)),
-        const SizedBox(width: 120),
-        Expanded(child: Text('\$${saldo.toStringAsFixed(2)}', textAlign: TextAlign.left, style: const TextStyle(fontSize: 15, fontStyle: FontStyle.italic))),
-      ],
-    ),
-  );
-}
-
-void _showAlertDialog(BuildContext context) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Cerrar sesión'),
-        content: const Text('Estás saliendo de la cuenta.'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // No salir de la cuenta
-            },
-            child: const Text('Cancelar'),
-          ),
-          TextButton(
-            onPressed: () async {
-              await FirebaseAuth.instance.signOut();
-              Navigator.of(context).pop(); // Cierra el diálogo
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (context) => const LoginScreen()), // Redirige a la pantalla de inicio de sesión
-              );
-            },
-            child: const Text('Aceptar'),
-          ),
-        ],
-      );
-    },
-  );
 }

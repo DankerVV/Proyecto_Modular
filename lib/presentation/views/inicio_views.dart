@@ -69,7 +69,7 @@ class InicioView extends StatelessWidget {
         cardColor = Colors.green;
         break;
       case 'amarillo':
-        cardColor = Colors.yellow;
+        cardColor = Colors.yellow.shade600;
         break;
       case 'supervisor':
         cardColor = Colors.orange;

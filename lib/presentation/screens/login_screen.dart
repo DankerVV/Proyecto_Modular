@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:proyecto_modular/presentation/screens/auth_service.dart';
 import 'package:proyecto_modular/presentation/screens/register_screen.dart';
-import 'package:proyecto_modular/presentation/screens/main_screen.dart'; 
+import 'package:proyecto_modular/presentation/screens/main_screen.dart';
 
 class LoginScreen extends HookConsumerWidget {
   const LoginScreen({super.key});
@@ -13,10 +13,22 @@ class LoginScreen extends HookConsumerWidget {
     final passwordController = TextEditingController();
     final authService = ref.watch(authServiceProvider);
 
+    void navigateTo(Widget screen) {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (_) => screen),
+      );
+    }
+
+    void showError(String message) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(message)),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Iniciar sesión'),
-        automaticallyImplyLeading: false, 
+        automaticallyImplyLeading: false,
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -42,24 +54,20 @@ class LoginScreen extends HookConsumerWidget {
                     passwordController.text,
                   );
 
-                  // Si el inicio de sesión es exitoso, redirige a la pantalla de inicio
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(builder: (context) => const MainScreen()),
-                  );
+                  // Redirige a la pantalla principal si el inicio de sesión es exitoso
+                  navigateTo(const MainScreen());
                 } catch (e) {
-                  // Si ocurre un error, muestra un mensaje de error
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(e.toString())),
-                  );
+                  // Muestra el mensaje de error
+                  showError(e.toString());
                 }
               },
               child: const Text('Ingresar'),
             ),
             TextButton(
               onPressed: () {
-                // Redirige a la pantalla de registro si el usuario no tiene una cuenta
+                // Redirige a la pantalla de registro
                 Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => const RegisterScreen()),
+                  MaterialPageRoute(builder: (_) => const RegisterScreen()),
                 );
               },
               child: const Text('¿No tienes una cuenta? Regístrate'),
