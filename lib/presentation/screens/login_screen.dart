@@ -13,14 +13,12 @@ class LoginScreen extends HookConsumerWidget {
     final passwordController = TextEditingController();
     final authService = ref.watch(authServiceProvider);
 
-    // Función para navegar a una nueva pantalla sin necesidad de context aquí
     void navigateTo(Widget screen) {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (_) => screen),
       );
     }
 
-    // Función para mostrar un SnackBar sin depender directamente del context
     void showError(String message) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(message)),
