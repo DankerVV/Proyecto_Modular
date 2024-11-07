@@ -26,7 +26,9 @@ class PerfilViewState extends State<PerfilView> {
   void initState() {
     super.initState();
     _loadProfileImage();
-    _getSaldo();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getSaldo();
+    });
   }
   Future<void> _getSaldo() async {
     final String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
@@ -35,11 +37,9 @@ class PerfilViewState extends State<PerfilView> {
     DocumentSnapshot userSnapshot = await userRef.get();
     if (userSnapshot.exists) {
       Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
-      if (mounted) {
-        setState(() {
-          saldo = userData['saldo'] ?? 0.0;
-        });
-      }    
+      setState(() {
+        saldo = userData['saldo'] ?? 0.0;
+      });
     }
   }
 
@@ -329,8 +329,9 @@ void _showAlertDialog(BuildContext context) {
               //Navigator.of(context).pop(); // Cierra el diálogo
               navigatorKey.currentState?.pop();
               //Navigator.of(context).pushReplacement
-              navigatorKey.currentState?.pushReplacement(
+              navigatorKey.currentState?.pushAndRemoveUntil(
                 MaterialPageRoute(builder: (context) => const LoginScreen()), // Redirige a la pantalla de inicio de sesión
+                (route) => false, // Elimina todas las rutas previas
               );
             },
             child: const Text('Aceptar'),

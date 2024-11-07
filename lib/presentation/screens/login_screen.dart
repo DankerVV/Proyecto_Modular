@@ -44,12 +44,12 @@ class LoginScreen extends HookConsumerWidget {
                   );
 
                   // Si el inicio de sesión es exitoso, redirige a la pantalla de inicio
-                  navigatorKey.currentState?.pushReplacement(
+                  navigatorKey.currentState?.pushAndRemoveUntil(
                     MaterialPageRoute(builder: (context) => const MainScreen()),
+                    (route) => false, // Elimina todas las rutas previas
                   );
                 } catch (e) {
                   // Si ocurre un error, muestra un mensaje de error
-                  print('ERROR TRISTE: $e');
                   scaffoldMessengerKey.currentState?.showSnackBar(
                     SnackBar(content: Text(e.toString())),
                   );
