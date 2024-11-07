@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:proyecto_modular/main.dart';
 import 'package:proyecto_modular/presentation/views/inicio_views/add_funds.dart';
 import 'package:universal_io/io.dart' as uio;
 import 'package:image_picker/image_picker.dart';
@@ -14,10 +15,10 @@ class PerfilView extends StatefulWidget {
   const PerfilView({super.key});
 
   @override
-  _PerfilViewState createState() => _PerfilViewState();
+  PerfilViewState createState() => PerfilViewState();
 }
 
-class _PerfilViewState extends State<PerfilView> {
+class PerfilViewState extends State<PerfilView> {
   String? _imageUrl;
   double saldo = 0.0;
 
@@ -34,9 +35,11 @@ class _PerfilViewState extends State<PerfilView> {
     DocumentSnapshot userSnapshot = await userRef.get();
     if (userSnapshot.exists) {
       Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
-      setState(() {
-        saldo = userData['saldo'] ?? 0.0;
-      });
+      if (mounted) {
+        setState(() {
+          saldo = userData['saldo'] ?? 0.0;
+        });
+      }    
     }
   }
 
@@ -51,7 +54,9 @@ class _PerfilViewState extends State<PerfilView> {
       //Obtener el usuario actual de la base de datos 
       final docSnapshot = await FirebaseFirestore.instance.collection('Users').doc(user.uid).get();
       if (docSnapshot.exists) {
-        final data = docSnapshot.data() as Map<String, dynamic>?;
+        //final data = docSnapshot.data() as Map<String, dynamic>?;
+        final data = docSnapshot.data();
+
         if (data != null) {
           if (mounted) {
             setState(() {
@@ -80,7 +85,7 @@ class _PerfilViewState extends State<PerfilView> {
         });
       }
 
-      ScaffoldMessenger.of(context).showSnackBar(
+      scaffoldMessengerKey.currentState?.showSnackBar(
         const SnackBar(content: Text('Imagen guardada exitosamente.')),
       );
     } catch (e) {
@@ -149,13 +154,13 @@ class _PerfilViewState extends State<PerfilView> {
                 ),
               ),
               const SizedBox(height: 40),
-              Cardinfo(context),
+              cardInfo(context),
               const SizedBox(height: 40),
               fundsButton(context, saldo),
               const SizedBox(height: 40),
-              Settingsbutton(context),
+              settingsButton(context),
               const SizedBox(height: 40),
-              Logoutbutton(context),
+              logoutButton(context),
             ],
           );
         },
@@ -221,7 +226,7 @@ class ProfileCard extends StatelessWidget {
   }
 }
 
-Widget Cardinfo(BuildContext context) {
+Widget cardInfo(BuildContext context) {
   return ElevatedButton(
     onPressed: () {
       Navigator.of(context).push(
@@ -242,7 +247,7 @@ Widget Cardinfo(BuildContext context) {
   );
 }
 
-Widget Settingsbutton(BuildContext context) {
+Widget settingsButton(BuildContext context) {
   return ElevatedButton(
     onPressed: () {
       Navigator.of(context).push(
@@ -263,7 +268,7 @@ Widget Settingsbutton(BuildContext context) {
   );
 }
 
-Widget Logoutbutton(BuildContext context) {
+Widget logoutButton(BuildContext context) {
   return ElevatedButton(
     onPressed: () {
       _showAlertDialog(context);
@@ -321,8 +326,10 @@ void _showAlertDialog(BuildContext context) {
           TextButton(
             onPressed: () async {
               await FirebaseAuth.instance.signOut();
-              Navigator.of(context).pop(); // Cierra el diálogo
-              Navigator.of(context).pushReplacement(
+              //Navigator.of(context).pop(); // Cierra el diálogo
+              navigatorKey.currentState?.pop();
+              //Navigator.of(context).pushReplacement
+              navigatorKey.currentState?.pushReplacement(
                 MaterialPageRoute(builder: (context) => const LoginScreen()), // Redirige a la pantalla de inicio de sesión
               );
             },
