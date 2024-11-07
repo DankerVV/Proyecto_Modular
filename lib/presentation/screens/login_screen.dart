@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:proyecto_modular/main.dart';
 import 'package:proyecto_modular/presentation/screens/auth_service.dart';
 import 'package:proyecto_modular/presentation/screens/register_screen.dart';
 import 'package:proyecto_modular/presentation/screens/main_screen.dart';
@@ -54,11 +55,16 @@ class LoginScreen extends HookConsumerWidget {
                     passwordController.text,
                   );
 
-                  // Redirige a la pantalla principal si el inicio de sesión es exitoso
-                  navigateTo(const MainScreen());
+                  // Si el inicio de sesión es exitoso, redirige a la pantalla de inicio
+                  navigatorKey.currentState?.pushAndRemoveUntil(
+                    MaterialPageRoute(builder: (context) => const MainScreen()),
+                    (route) => false, // Elimina todas las rutas previas
+                  );
                 } catch (e) {
-                  // Muestra el mensaje de error
-                  showError(e.toString());
+                  // Si ocurre un error, muestra un mensaje de error
+                  scaffoldMessengerKey.currentState?.showSnackBar(
+                    SnackBar(content: Text(e.toString())),
+                  );
                 }
               },
               child: const Text('Ingresar'),

@@ -1,16 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:proyecto_modular/main.dart';
 import 'package:proyecto_modular/presentation/screens/login_screen.dart';
 
 class ProfileSettings extends StatefulWidget {
   const ProfileSettings({super.key});
 
   @override
-  _ProfileSettingsState createState() => _ProfileSettingsState();
+  ProfileSettingsState createState() => ProfileSettingsState();
 }
 
-class _ProfileSettingsState extends State<ProfileSettings> {
+class ProfileSettingsState extends State<ProfileSettings> {
   final _formKey = GlobalKey<FormState>();
   bool _isEditing = false;
   String _name = '';
@@ -61,7 +62,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
             .update({
           'name': _name,
         });
-        ScaffoldMessenger.of(context).showSnackBar(
+        scaffoldMessengerKey.currentState?.showSnackBar(
           const SnackBar(content: Text('Perfil actualizado')),
         );
       } catch (e) {
@@ -112,7 +113,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
                 child: Text(_isEditing ? 'Guardar Cambios' : 'Editar Perfil'),
               ),
               const SizedBox(height: 40),
-              Deleteaccount(context),
+              deleteAccount(context),
             ],
           ),
         ),
@@ -122,7 +123,7 @@ class _ProfileSettingsState extends State<ProfileSettings> {
 }
 
 // Eliminar Cuenta 
-Widget Deleteaccount(BuildContext context){
+Widget deleteAccount(BuildContext context){
   return(
     ElevatedButton(
        onPressed: (){
@@ -170,13 +171,13 @@ void _showAlertDialog(BuildContext context) {
                   await user.delete();
 
                   // ir a la pantalla de inicio de sesión
-                  Navigator.of(context).pushReplacement(
+                  navigatorKey.currentState?.pushReplacement(
                     MaterialPageRoute(builder: (context) => const LoginScreen()),
                   );
                 }
               } catch (e) {
                 // Manejar errores (como la necesidad de volver a autenticarse antes de eliminar la cuenta)
-                ScaffoldMessenger.of(context).showSnackBar(
+                scaffoldMessengerKey.currentState?.showSnackBar(
                   SnackBar(content: Text('Error al eliminar la cuenta: ${e.toString()}')),
                 );
               }

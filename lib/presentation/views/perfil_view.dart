@@ -1,5 +1,7 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:proyecto_modular/main.dart';
+import 'package:proyecto_modular/presentation/views/inicio_views/add_funds.dart';
 import 'package:universal_io/io.dart' as uio;
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -13,16 +15,36 @@ class PerfilView extends StatefulWidget {
   const PerfilView({super.key});
 
   @override
-  _PerfilViewState createState() => _PerfilViewState();
+  PerfilViewState createState() => PerfilViewState();
 }
 
-class _PerfilViewState extends State<PerfilView> {
+class PerfilViewState extends State<PerfilView> {
   String? _imageUrl;
 
   @override
   void initState() {
     super.initState();
     _loadProfileImage();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _getSaldo();
+    });
+  }
+  Future<void> _getSaldo() async {
+    final String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    final DocumentReference userRef = FirebaseFirestore.instance.collection('Users').doc(uid);
+    
+    DocumentSnapshot userSnapshot = await userRef.get();
+    if (userSnapshot.exists) {
+      Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
+      setState(() {
+        saldo = userData['saldo'] ?? 0.0;
+      });
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   Future<void> _loadProfileImage() async {
@@ -30,11 +52,15 @@ class _PerfilViewState extends State<PerfilView> {
     if (user != null) {
       final docSnapshot = await FirebaseFirestore.instance.collection('Users').doc(user.uid).get();
       if (docSnapshot.exists) {
-        final data = docSnapshot.data() as Map<String, dynamic>?;
-        if (data != null && mounted) {
-          setState(() {
-            _imageUrl = data['profileImageUrl'];
-          });
+        //final data = docSnapshot.data() as Map<String, dynamic>?;
+        final data = docSnapshot.data();
+
+        if (data != null) {
+          if (mounted) {
+            setState(() {
+              _imageUrl = data['profileImageUrl'];
+            });
+          }
         }
       }
     }
@@ -54,7 +80,9 @@ class _PerfilViewState extends State<PerfilView> {
         setState(() => _imageUrl = imageUrl);
       }
 
-      _showSnackBar('Imagen guardada exitosamente.');
+      scaffoldMessengerKey.currentState?.showSnackBar(
+        const SnackBar(content: Text('Imagen guardada exitosamente.')),
+      );
     } catch (e) {
       _showSnackBar('Error al guardar la imagen: ${e.toString()}');
     }
@@ -127,11 +155,13 @@ class _PerfilViewState extends State<PerfilView> {
                 ),
               ),
               const SizedBox(height: 40),
-              _buildCardInfoButton(),
+              cardInfo(context),
               const SizedBox(height: 40),
               _buildSettingsButton(),
               const SizedBox(height: 40),
-              _buildLogoutButton(),
+              settingsButton(context),
+              const SizedBox(height: 40),
+              logoutButton(context),
             ],
           );
         },
@@ -258,4 +288,120 @@ class ProfileCard extends StatelessWidget {
       ),
     );
   }
+}
+
+Widget cardInfo(BuildContext context) {
+  return ElevatedButton(
+    onPressed: () {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const Cardview()),
+      );
+    },
+    style: ElevatedButton.styleFrom(
+      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+    ),
+    child: const Row(
+      children: [
+        SizedBox(width: 15),
+        Text('Ver tarjetas', textAlign: TextAlign.left, style: TextStyle(fontSize: 22)),
+        SizedBox(width: 140),
+        Icon(Icons.credit_card, size: 30),
+      ],
+    ),
+  );
+}
+
+Widget settingsButton(BuildContext context) {
+  return ElevatedButton(
+    onPressed: () {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const ProfileSettings()),
+      );
+    },
+    style: ElevatedButton.styleFrom(
+      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+    ),
+    child: const Row(
+      children: [
+        SizedBox(width: 15),
+        Text('Configurar perfil', textAlign: TextAlign.left, style: TextStyle(fontSize: 22)),
+        SizedBox(width: 95),
+        Icon(Icons.settings, size: 30),
+      ],
+    ),
+  );
+}
+
+Widget logoutButton(BuildContext context) {
+  return ElevatedButton(
+    onPressed: () {
+      _showAlertDialog(context);
+    },
+    style: ElevatedButton.styleFrom(
+      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+    ),
+    child: const Row(
+      children: [
+        SizedBox(width: 15),
+        Text('Cerrar sesión', textAlign: TextAlign.left, style: TextStyle(fontSize: 22)),
+        SizedBox(width: 130),
+        Icon(Icons.logout, size: 30),
+      ],
+    ),
+  );
+}
+
+Widget fundsButton(BuildContext context, double saldo) {
+  return ElevatedButton(
+    onPressed: () {
+      Navigator.of(context).push(
+        MaterialPageRoute(builder: (context) => const AddFunds()),
+      );
+    },
+    style: ElevatedButton.styleFrom(
+      padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 20.0),
+    ),
+    child:  Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const SizedBox(width: 15),
+        const Text('Agregar saldo', textAlign: TextAlign.left, style: TextStyle(fontSize: 22)),
+        const SizedBox(width: 120),
+        Expanded(child: Text('\$${saldo.toStringAsFixed(2)}', textAlign: TextAlign.left, style: const TextStyle(fontSize: 15, fontStyle: FontStyle.italic))),
+      ],
+    ),
+  );
+}
+
+void _showAlertDialog(BuildContext context) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: const Text('Cerrar sesión'),
+        content: const Text('Estás saliendo de la cuenta.'),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(context).pop(); // No salir de la cuenta
+            },
+            child: const Text('Cancelar'),
+          ),
+          TextButton(
+            onPressed: () async {
+              await FirebaseAuth.instance.signOut();
+              //Navigator.of(context).pop(); // Cierra el diálogo
+              navigatorKey.currentState?.pop();
+              //Navigator.of(context).pushReplacement
+              navigatorKey.currentState?.pushAndRemoveUntil(
+                MaterialPageRoute(builder: (context) => const LoginScreen()), // Redirige a la pantalla de inicio de sesión
+                (route) => false, // Elimina todas las rutas previas
+              );
+            },
+            child: const Text('Aceptar'),
+          ),
+        ],
+      );
+    },
+  );
 }
