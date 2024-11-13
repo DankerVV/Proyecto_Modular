@@ -26,22 +26,6 @@ class PerfilViewState extends State<PerfilView> {
   void initState() {
     super.initState();
     _loadProfileImage();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      _getSaldo();
-    });
-  }
-
-  Future<void> _getSaldo() async {
-    final String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
-    final DocumentReference userRef = FirebaseFirestore.instance.collection('Users').doc(uid);
-    
-    DocumentSnapshot userSnapshot = await userRef.get();
-    if (userSnapshot.exists) {
-      Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
-      setState(() {
-        saldo = userData['saldo'] ?? 0.0;
-      });
-    }
   }
 
   Future<void> _loadProfileImage() async {
@@ -131,6 +115,7 @@ class PerfilViewState extends State<PerfilView> {
           var data = snapshot.data!.data() as Map<String, dynamic>;
           var name = data['name'] ?? 'Nombre no disponible';
           var tipo = data['tipo'] ?? 'Tipo no disponible';
+          var saldo = data['saldo'] ?? 0.0;//AAAAAAAAAAAAAAAAAAAA
           _imageUrl = data['profileImageUrl'] ?? _imageUrl;
 
           return Column(

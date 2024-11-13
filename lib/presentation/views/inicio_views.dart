@@ -164,7 +164,7 @@ Widget physicalCard(BuildContext context) {
       children: [
         SizedBox(width: 15),
         Text('Recargar tarjeta física', textAlign: TextAlign.left, style: TextStyle(fontSize: 22)),
-        SizedBox(width: 50),
+        SizedBox(width: 55),
         Icon(Icons.credit_card, size: 30),
       ],
     ),

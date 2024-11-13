@@ -107,6 +107,12 @@ Future<String> processPayment(double monto, String cardType) async {
       Map<String, dynamic> cardData = userSnapshot.data() as Map<String, dynamic>;
       // Obtener el saldo actual de la tarjeta
       double saldoActual = cardData['saldo'] ?? 0.0;
+
+      //Cancelar operación si no hay saldo suficiente
+      if(saldoActual < monto){
+        return 'No tienes suficiente saldo';
+      }
+
       // Verificar el tipo de tarjeta y restar el monto correspondiente
       if (cardType == 'basico') {
         saldoActual -= monto;
@@ -119,7 +125,7 @@ Future<String> processPayment(double monto, String cardType) async {
       }
       // Actualizar el campo "saldo" en la base de datos
       await userRef.update({'saldo': saldoActual});
-      return 'Saldo actualizado: \$${saldoActual.toStringAsFixed(2)}.'; // Retornar el mensaje
+      return '-\$${monto.toStringAsFixed(2)}\nSaldo actualizado: \$${saldoActual.toStringAsFixed(2)}.'; // Retornar el mensaje
     } else {
       return 'Error con la tarjeta.';
     }

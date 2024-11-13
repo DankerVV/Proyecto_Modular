@@ -14,10 +14,27 @@ class AddFundsState extends State<AddFunds> {
   final _amountController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   final GlobalKey<ScaffoldMessengerState> _scaffoldMessengerKey = GlobalKey<ScaffoldMessengerState>();
+  double saldo = 0.0;
+  String fundsMessage = '';
 
   @override
   void initState() {
     super.initState();
+    getSaldo();
+  }
+
+  void getSaldo() async {
+    final String uid = FirebaseAuth.instance.currentUser?.uid ?? '';
+    final DocumentReference userRef = FirebaseFirestore.instance.collection('Users').doc(uid);
+    
+    DocumentSnapshot userSnapshot = await userRef.get();
+    if (userSnapshot.exists) {
+      Map<String, dynamic> userData = userSnapshot.data() as Map<String, dynamic>;
+      setState(() {
+        saldo = userData['saldo'] ?? 0.0;
+        fundsMessage = 'Saldo disponible: \$${saldo.toStringAsFixed(2)}';
+      });
+    }
   }
 
   @override
@@ -32,6 +49,13 @@ class AddFundsState extends State<AddFunds> {
           key: _formKey,
           child: Column(
             children: [
+              const SizedBox(height: 35,),
+              Text(
+                fundsMessage,
+                style: const TextStyle(fontSize: 18),
+                textAlign: TextAlign.start,
+              ),
+              const SizedBox(height: 35,),
               TextFormField(
                 decoration: const InputDecoration(labelText: 'Cantidad a añadir'),
                 controller: _amountController,
@@ -54,6 +78,7 @@ class AddFundsState extends State<AddFunds> {
                     final amount = double.parse(_amountController.text);
                     procesarPago(amount, _scaffoldMessengerKey); // Llamar a la función de pago
                     agregarSaldo(amount);
+                    changeMessage(saldo+amount);
                   }
                 },
                 child: const Text('Añadir Fondos'),
@@ -63,6 +88,12 @@ class AddFundsState extends State<AddFunds> {
         ),
       ),
     );
+  }
+
+    void changeMessage(double saldoFinal) {
+    setState(() {
+      fundsMessage = 'Saldo disponible: \$${saldoFinal.toStringAsFixed(2)}';
+    });
   }
 }
 
